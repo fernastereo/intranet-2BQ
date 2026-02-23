@@ -4,7 +4,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import { useAuth } from '@/composables/useAuth';
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
@@ -68,11 +68,11 @@ const router = createRouter({
       // which is lazy-loaded when the route is visited.
       // component: () => import('../views/PqrView.vue'),
     },
-    {
-      path: '/:pathMatch(.*)*',
-      name: 'not-found',
-      component: 'NotFoundView',
-    },
+    // {
+    //   path: '/:pathMatch(.*)*',
+    //   name: 'not-found',
+    //   component: 'NotFoundView',
+    // },
   ],
 });
 
