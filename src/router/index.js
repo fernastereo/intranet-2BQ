@@ -21,7 +21,7 @@ const router = createRouter({
     {
       path: '/nueva-solicitud',
       name: 'nueva-solicitud',
-      // component: () => import('@/views/NuevaSolicitudView.vue')
+      component: () => import('@/views/DashboardView.vue')
     },
     {
       path: '/consultar',
