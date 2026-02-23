@@ -101,8 +101,9 @@ jobs:
 
       - name: ✅ Deployment Success
         run: |
-          echo "🎉 Deployment completed successfully!"
+          echo "🎉 Deployment to production completed successfully!"
           echo "🌐 Your site should be live at: https://curaduria2barranquilla.com/ventanilla/"
+          echo "📝 .htaccess configured for: /ventanilla/"
 
       - name: 📧 Notify on success
         if: success()
