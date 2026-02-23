@@ -4,13 +4,35 @@ import { createRouter, createWebHistory } from 'vue-router';
 import { useAuth } from '@/composables/useAuth';
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
+      name: 'ventanilla-public',
+      component: () => import('@/views/VentanillaPublicView.vue'),
+      meta: { requiresAuth: false },
+    },
+    {
+      path: '/login',
       name: 'login',
       component: LoginView,
       meta: { requiresAuth: false },
+    },
+    {
+      path: '/nueva-solicitud',
+      name: 'nueva-solicitud',
+      // component: () => import('@/views/NuevaSolicitudView.vue')
+    },
+    {
+      path: '/consultar',
+      name: 'consultar',
+      // component: () => import('@/views/ConsultarView.vue')
+    },
+    {
+      path: '/solicitud/:numero',
+      name: 'detalle-solicitud',
+      // component: () => import('@/views/DetalleSolicitudView.vue'),
+      props: true
     },
     {
       path: '/home',
@@ -48,11 +70,11 @@ const router = createRouter({
             },
           ],
         },
-        {
-          path: 'pqr',
-          name: 'pqr',
-          component: () => import('@/views/PqrView.vue'),
-        },
+        // {
+        //   path: 'ventanilla',
+        //   name: 'ventanilla',
+        //   component: () => import('@/views/VentanillaView.vue'),
+        // },
         {
           path: 'reportes',
           name: 'reportes',
@@ -68,20 +90,29 @@ const router = createRouter({
       // which is lazy-loaded when the route is visited.
       // component: () => import('../views/PqrView.vue'),
     },
-    {
-      path: '/:pathMatch(.*)*',
-      name: 'not-found',
-      component: 'NotFoundView',
-    },
+    // {
+    //   path: '/:pathMatch(.*)*',
+    //   name: 'not-found',
+    //   component: 'NotFoundView',
+    // },
   ],
 });
+
+// Bandera para prevenir loops infinitos
+let isCheckingAuth = false;
 
 router.beforeEach(async (to, from, next) => {
   const { isAuthenticated, checkAuth } = useAuth();
   const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
 
+  // Si la ruta no requiere autenticación, dejar pasar
   if (!requiresAuth) {
     if (to.name === 'login' && isAuthenticated.value) {
+      // Prevenir loop: si ya estamos intentando ir a home, no redirigir
+      if (isCheckingAuth) {
+        next();
+        return;
+      }
       next({ name: 'home' });
     } else {
       next();
@@ -89,6 +120,7 @@ router.beforeEach(async (to, from, next) => {
     return;
   }
 
+  // Si no está autenticado, redirigir al login
   if (!isAuthenticated.value) {
     next({
       name: 'login',
@@ -97,15 +129,32 @@ router.beforeEach(async (to, from, next) => {
     return;
   }
 
-  const isValidToken = await checkAuth();
-  if (!isValidToken) {
+  // Prevenir verificaciones múltiples simultáneas
+  if (isCheckingAuth) {
+    next();
+    return;
+  }
+
+  // Verificar el token solo una vez
+  isCheckingAuth = true;
+  try {
+    const isValidToken = await checkAuth();
+    if (!isValidToken) {
+      next({
+        name: 'login',
+        query: { redirect: to.fullPath },
+      });
+      return;
+    }
+    next();
+  } catch (error) {
+    console.error('Error en verificación de autenticación:', error);
     next({
       name: 'login',
       query: { redirect: to.fullPath },
     });
-    return;
+  } finally {
+    isCheckingAuth = false;
   }
-
-  next();
 });
 export default router;

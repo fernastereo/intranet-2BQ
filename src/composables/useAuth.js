@@ -123,6 +123,7 @@ export const useAuth = () => {
       const data = await response.json();
 
       if (data.status === 'error') {
+        // Solo limpiar el estado local, no hacer llamadas adicionales
         setToken(null);
         setUser(null);
         localStorage.removeItem('token');
@@ -132,7 +133,13 @@ export const useAuth = () => {
 
       return true;
     } catch (e) {
-      logout();
+      // En caso de error de red, solo limpiar el estado local
+      // NO llamar a logout() para evitar loops infinitos
+      setToken(null);
+      setUser(null);
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      authError.value = e.message;
       return false;
     }
   };

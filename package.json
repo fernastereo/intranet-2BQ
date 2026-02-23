@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:prod": "node scripts/copy-htaccess.js production && vite build --mode production",
+    "build:staging": "node scripts/copy-htaccess.js staging && vite build --mode staging",
     "preview": "vite preview",
     "test:unit": "vitest"
   },
