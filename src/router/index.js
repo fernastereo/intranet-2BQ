@@ -70,11 +70,11 @@ const router = createRouter({
             },
           ],
         },
-        {
-          path: 'ventanilla',
-          name: 'ventanilla',
-          component: () => import('@/views/VentanillaView.vue'),
-        },
+        // {
+        //   path: 'ventanilla',
+        //   name: 'ventanilla',
+        //   component: () => import('@/views/VentanillaView.vue'),
+        // },
         {
           path: 'reportes',
           name: 'reportes',
