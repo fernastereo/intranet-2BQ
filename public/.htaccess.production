@@ -1,15 +1,30 @@
+# Configuración optimizada para GoDaddy
 <IfModule mod_negotiation.c>
   Options -MultiViews
 </IfModule>
 
 <IfModule mod_rewrite.c>
   RewriteEngine On
-  # Ya no necesitamos RewriteBase porque es la raíz del subdominio
-
-  # Si la solicitud es para un archivo o directorio existente, servirlo directamente
+  RewriteBase /
+  
+  # No reescribir archivos existentes (assets, favicon, etc)
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_FILENAME} !-l
   
-  # De lo contrario, redirigir todo al index.html
-  RewriteRule ^ index.html [L]
+  # Redirigir todo al index.html
+  RewriteRule ^.*$ index.html [L,QSA]
+</IfModule>
+
+# Fallback para 404s
+<IfModule mod_dir.c>
+  DirectoryIndex index.html
+</IfModule>
+
+# Configuración de errores personalizada
+ErrorDocument 404 /index.html
+
+# Habilitar compresión (opcional, mejora rendimiento)
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css text/javascript application/javascript application/json
 </IfModule>
