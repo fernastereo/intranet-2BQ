@@ -4,7 +4,7 @@
 
 <IfModule mod_rewrite.c>
   RewriteEngine On
-  RewriteBase /ventanilla/
+  # Ya no necesitamos RewriteBase porque es la raíz del subdominio
 
   # Si la solicitud es para un archivo o directorio existente, servirlo directamente
   RewriteCond %{REQUEST_FILENAME} !-f

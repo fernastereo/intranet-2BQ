@@ -92,7 +92,7 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./dist/
-          server-dir: /httpdocs/ventanilla/
+          server-dir: /ventanilla.curaduria2barranquilla.com/
           exclude: |
             **/.git*
             **/.git*/**
@@ -102,8 +102,8 @@ jobs:
       - name: ✅ Deployment Success
         run: |
           echo "🎉 Deployment to production completed successfully!"
-          echo "🌐 Your site should be live at: https://curaduria2barranquilla.com/ventanilla/"
-          echo "📝 .htaccess configured for: /ventanilla/"
+          echo "🌐 Your site should be live at: https://ventanilla.curaduria2barranquilla.com/"
+          echo "📝 Subdominio configurado correctamente"
 
       - name: 📧 Notify on success
         if: success()
