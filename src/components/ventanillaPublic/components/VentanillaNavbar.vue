@@ -1,9 +1,9 @@
 <template>
-  <nav class="bg-white shadow-md border-b-[7px] border-[#FFA800] h-[122px]">
-    <div class="container-fluid px-3">
-      <div class="flex items-center justify-between h-[117px]">
+  <nav class="bg-white shadow-md border-b-[7px] border-[#FFA800] h-[60px] md:h-[122px] z-50">
+    <div class="container-fluid md:px-3">
+      <div class="px-3 flex items-center justify-between h-[60px] md:h-[117px]">
         <!-- Logo -->
-        <router-link to="/" class="py-2">
+        <router-link to="/" class="py-2 hidden lg:block">
           <img 
             src="http://www.curaduria2barranquilla.com/nuevapagina/img/Logo2.png" 
             alt="logo" 
@@ -81,9 +81,9 @@
       <!-- Menú móvil -->
       <div 
         :class="isMenuOpen ? 'block' : 'hidden'"
-        class="lg:hidden pb-4"
+        class="lg:hidden pb-4 bg-gray-100"
       >
-        <ul class="space-y-2">
+        <ul class="space-y-2 ">
           <li>
             <router-link to="/" class="nav-item-link-mobile">Inicio</router-link>
           </li>
@@ -111,11 +111,11 @@
           <li>
             <router-link to="/login" class="nav-item-link-mobile">Intranet</router-link>
           </li>
-          <li class="pt-2">
+          <li class="pt-2 flex justify-center">
             <a 
               href="https://curaduria2barranquilla.com/consultas.html" 
               target="_blank"
-              class="bg-[#1A4972] text-white px-8 py-2 rounded shadow-md hover:bg-[#143a5c] transition-colors duration-200 inline-block w-full text-center"
+              class="btn-consultas w-[80%] text-center"
             >
               Consultas
             </a>
@@ -172,5 +172,10 @@ const isMenuOpen = ref(false)
   border-radius: 30px;
   padding: 6px 48px;
   box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .15) !important;
+}
+
+.btn-consultas:hover {
+  background-color: #FFA800 !important;
+  color: #FFFFFF !important;
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <footer class="pt-5 border-t-[7px] border-[#FFA800] text-[#1A4972] text-md">
+  <footer class="p-2 border-t-[7px] border-[#FFA800] text-[#1A4972] text-sm md:text-md">
     <div class="text-center pt-4 pb-1 ">
       Horario: Lunes a viernes de 8:00 a.m. a 12:00p.m. y de 1:00p.m. a 5:00 p.m.
     </div>
