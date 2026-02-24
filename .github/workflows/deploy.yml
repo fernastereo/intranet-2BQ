@@ -92,7 +92,7 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./dist/
-          server-dir: /ventanilla.curaduria2barranquilla.com/frontend/
+          server-dir: /ventanilla.curaduria2barranquilla.com/app/
           exclude: |
             **/.git*
             **/.git*/**
