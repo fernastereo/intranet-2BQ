@@ -4,15 +4,10 @@
     <VentanillaNavbar />
 
     <!-- Contenido principal -->
-    <section class="my-auto">
-      <div class="container-fluid">
-        <div class="row">
-          <h1 class="titulo">Ventanilla Public 5.0</h1>
-          <h2>La Venganza Final!</h2>
-          <!-- <HomeView /> -->
-        </div>
-      </div>
-    </section>
+    <div class="flex-grow">
+      <HomeView />
+    </div>
+
 
     <!-- Footer -->
     <VentanillaFooter />
@@ -22,7 +17,7 @@
 <script setup>
   import VentanillaNavbar from '@/components/ventanillaPublic/components/VentanillaNavbar.vue'
   import VentanillaFooter from '@/components/ventanillaPublic/components/VentanillaFooter.vue'
-  // import HomeView from '@/components/ventanillaPublic/views/HomeView.vue'
+  import HomeView from '@/components/ventanillaPublic/views/HomeView.vue'
 </script>
 
 <style scoped>
