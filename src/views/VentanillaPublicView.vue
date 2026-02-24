@@ -1,13 +1,13 @@
 <template>
   <div style="min-height: 100vh; margin: 0; display: grid; grid-template-rows: auto 1fr auto;">
     <!-- Navbar -->
-    <!-- <VentanillaNavbar /> -->
+    <VentanillaNavbar />
 
     <!-- Contenido principal -->
     <section class="my-auto">
       <div class="container-fluid">
         <div class="row">
-          <h1>Ventanilla Public 5.0</h1>
+          <h1 class="titulo">Ventanilla Public 5.0</h1>
           <h2>La Venganza Final!</h2>
           <!-- <HomeView /> -->
         </div>
@@ -15,12 +15,15 @@
     </section>
 
     <!-- Footer -->
-    <!-- <VentanillaFooter /> -->
+    <VentanillaFooter />
   </div>
 </template>
 
 <script setup>
-  // import VentanillaNavbar from '@/components/ventanillaPublic/components/VentanillaNavbar.vue'
-  // import VentanillaFooter from '@/components/ventanillaPublic/components/VentanillaFooter.vue'
+  import VentanillaNavbar from '@/components/ventanillaPublic/components/VentanillaNavbar.vue'
+  import VentanillaFooter from '@/components/ventanillaPublic/components/VentanillaFooter.vue'
   // import HomeView from '@/components/ventanillaPublic/views/HomeView.vue'
 </script>
+
+<style scoped>
+</style>
