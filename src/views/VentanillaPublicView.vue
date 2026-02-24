@@ -7,7 +7,8 @@
     <section class="my-auto">
       <div class="container-fluid">
         <div class="row">
-          <h1>Ventanilla Public 4.0</h1>
+          <h1>Ventanilla Public 5.0</h1>
+          <h2>La Venganza Final!</h2>
           <!-- <HomeView /> -->
         </div>
       </div>
