@@ -9,13 +9,13 @@
         <div class="max-w-3xl">
           <div class="inline-flex items-center gap-2 rounded-full bg-[#FFA800]/20 px-4 py-1.5 text-sm font-medium text-[#FFC04D] mb-6">
             <span class="w-2 h-2 rounded-full bg-[#FFA800] animate-pulse"></span>
-            Portal de Tramites en Linea
+            Portal de Trámites en Línea
           </div>
           <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white leading-tight tracking-tight">
             Ventanilla Unica de Radicación y Servicios
           </h1>
           <p class="mt-6 text-lg md:text-xl text-blue-200 leading-relaxed max-w-2xl">
-            Realice sus tramites de radicación y solicitud de servicios de forma rapida y segura a traves de nuestro portal digital. Presente su solicitud y de seguimiento en linea.
+            Realice sus tramites de radicación y solicitud de servicios de forma rápida y segura a través de nuestro portal digital. Presente su solicitud y haga seguimiento en linea.
           </p>
           <div class="mt-10 flex flex-col sm:flex-row gap-4">
             <router-link to="/nueva-solicitud" class="inline-flex items-center justify-center gap-2 rounded-lg bg-[#FFA800] px-8 py-4 text-base font-semibold text-white transition-all duration-200 hover:bg-[#E69500] shadow-lg">
@@ -61,7 +61,7 @@
             </div>
             <h3 class="text-lg font-bold text-gray-900 mb-2">1. Presente su Solicitud</h3>
             <p class="text-gray-600 text-sm leading-relaxed">
-              Complete el formulario en linea con sus datos personales, informacion de su solicitud y anexe documentos.
+              Complete el formulario en linea con sus datos personales, información de su solicitud y anexe documentos.
             </p>
           </div>
 
@@ -72,9 +72,9 @@
                 <polyline points="12 6 12 12 16 14" />
               </svg>
             </div>
-            <h3 class="text-lg font-bold text-gray-900 mb-2">2. Revision Jurídica / Tecnica</h3>
+            <h3 class="text-lg font-bold text-gray-900 mb-2">2. Revisión Jurídica / Técnica</h3>
             <p class="text-gray-600 text-sm leading-relaxed">
-              Nuestro equipo de profesionales revisara su solicitud y la documentacion adjunta.
+              Nuestro equipo de profesionales revisará su solicitud y la documentación adjunta.
             </p>
           </div>
 
