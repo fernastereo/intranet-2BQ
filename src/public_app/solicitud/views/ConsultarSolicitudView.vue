@@ -23,31 +23,35 @@
 
         <form @submit.prevent="handleSendOtp" novalidate class="flex flex-col gap-5">
           <!-- <form novalidate class="flex flex-col gap-5"> -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div>
-            <label for="numero" class="block text-sm font-medium text-gray-700 mb-1.5">Numero de Solicitud <span class="text-red-500">*</span></label>
+            <label for="numerosolicitud" class="block text-sm font-medium text-gray-700 mb-1.5">Numero de Solicitud <span class="text-red-500">*</span></label>
             <input
-              id="numero"
-              v-model="consultaForm.numero"
+              id="numerosolicitud"
+              v-model="consultaForm.numerosolicitud"
               type="text"
               class="w-full px-3.5 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A4972] focus:border-transparent transition-all font-mono"
-              placeholder="SOL-XXXXXXX-XXXX"
+              placeholder=""
               required
             />
-            <p v-if="errors.numero" class="mt-1 text-xs text-red-500">{{ errors.numero }}</p>
+            <p v-if="errors.numerosolicitud" class="mt-1 text-xs text-red-500">{{ errors.numerosolicitud }}</p>
           </div>
 
           <div>
-            <label for="vigencia" class="block text-sm font-medium text-gray-700 mb-1.5">Vigencia <span class="text-red-500">*</span></label>
+            <label for="vigencia" class="block text-sm font-medium text-gray-700 mb-1.5">Vigencia (Año) <span class="text-red-500">*</span></label>
             <input
               id="vigencia"
-              v-model="consultaForm.vigencia"
-              type="date"
+              v-model.number="consultaForm.vigencia"
+              type="number"
+              min="2024"
+              max="2050"
+              placeholder="2026"
               class="w-full px-3.5 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A4972] focus:border-transparent transition-all"
               required
             />
             <p v-if="errors.vigencia" class="mt-1 text-xs text-red-500">{{ errors.vigencia }}</p>
           </div>
-
+          </div>
           <div>
             <label for="email" class="block text-sm font-medium text-gray-700 mb-1.5">Correo Electronico Registrado <span class="text-red-500">*</span></label>
             <input
@@ -65,7 +69,7 @@
             {{ errorMessage }}
           </div>
 
-          <button type="submit" class="inline-flex items-center justify-center gap-2 rounded-lg bg-[#1A4972] px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-[#143a5c] transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed w-full" :disabled="loading">
+          <button type="submit" class="inline-flex items-center justify-center gap-2 rounded-lg bg-[#FFA800] px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-[#143a5c] transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed w-full" :disabled="loading">
             <svg v-if="loading" class="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <circle cx="12" cy="12" r="10" stroke-opacity="0.25" />
               <path d="M12 2a10 10 0 0 1 10 10" stroke-opacity="1" />
@@ -77,25 +81,6 @@
             {{ loading ? 'Verificando...' : 'Enviar Codigo de Verificacion' }}
           </button>
         </form>
-
-        <!-- Demo hint -->
-        <div class="mt-6 rounded-xl bg-blue-50 border border-blue-200 p-4">
-          <p class="text-xs font-semibold text-[#1A4972] mb-2">Datos de prueba (Demo):</p>
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
-            <div>
-              <span class="text-gray-500">Solicitud:</span>
-              <button @click="fillDemo" class="font-mono text-[#1A4972] hover:underline ml-1">SOL-DEMO01-ABCD</button>
-            </div>
-            <div>
-              <span class="text-gray-500">Vigencia:</span>
-              <span class="font-mono text-gray-900 ml-1">2026-12-15</span>
-            </div>
-            <div>
-              <span class="text-gray-500">Correo:</span>
-              <span class="font-mono text-gray-900 ml-1">demo@ejemplo.com</span>
-            </div>
-          </div>
-        </div>
       </div>
 
       <!-- Step 2: OTP Verification -->
@@ -111,17 +96,13 @@
         <p class="text-sm text-gray-600 mb-2">
           Se ha enviado un codigo de 6 digitos a <strong class="text-gray-900">{{ maskedEmail }}</strong>
         </p>
-        <p class="text-xs text-[#FFA800] font-medium mb-8">
-          (Demo: Revise la consola del navegador con F12 para ver el codigo)
-        </p>
 
-        <!-- <form @submit.prevent="handleVerifyOtp" class="max-w-sm mx-auto"> -->
-          <form class="max-w-sm mx-auto">
+        <form @submit.prevent="handleVerifyOtp" class="max-w-sm mx-auto">
           <div class="flex justify-center gap-2 mb-6">
-            <!-- :ref="el => { if (el) otpInputRefs[index] = el as HTMLInputElement }" -->
             <input
               v-for="(_, index) in 6"
               :key="index"
+              :ref="el => setOtpRef(el, index)"
               type="text"
               maxlength="1"
               inputmode="numeric"
@@ -155,18 +136,25 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
-// import { enviarOtp, verificarOtp } from '@/services/api'
-// import type { Solicitud } from '@/types'
+import { useSolicitudes } from '@/shared/composables/useSolicitudes'
 
 const router = useRouter()
 
+const {
+  solicitud,
+  solicitarOTP,
+  verificarOTP,
+  getSolicitud,
+  loading,
+  apiError
+} = useSolicitudes()
+
 const step = ref<'form' | 'otp'>('form')
-const loading = ref(false)
 const errorMessage = ref('')
 const otpError = ref('')
 
 const consultaForm = ref({
-  numero: '',
+  numerosolicitud: '',
   vigencia: '',
   email: ''
 })
@@ -185,18 +173,23 @@ const maskedEmail = computed(() => {
   return masked + '@' + domain
 })
 
-function fillDemo() {
-  consultaForm.value = {
-    numero: 'SOL-DEMO01-ABCD',
-    vigencia: '2026-12-15',
-    email: 'demo@ejemplo.com'
-  }
+function setOtpRef(el: any, index: number) {
+  if (el) otpInputRefs.value[index] = el
 }
 
 function validateForm(): boolean {
   errors.value = {}
-  if (!consultaForm.value.numero.trim()) errors.value.numero = 'El numero de solicitud es requerido'
-  if (!consultaForm.value.vigencia) errors.value.vigencia = 'La vigencia es requerida'
+  if (!consultaForm.value.numerosolicitud.trim()) errors.value.numerosolicitud = 'El numero de solicitud es requerido'
+  
+  if (!consultaForm.value.vigencia) {
+    errors.value.vigencia = 'La vigencia es requerida'
+  } else {
+    const year = Number(consultaForm.value.vigencia)
+    if (isNaN(year) || year < 2026 ) {
+      errors.value.vigencia = 'Ingrese un año valido a partir de 2022'
+    }
+  }
+  
   if (!consultaForm.value.email.trim()) errors.value.email = 'El correo electronico es requerido'
   else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(consultaForm.value.email)) errors.value.email = 'Ingrese un correo valido'
   return Object.keys(errors.value).length === 0
@@ -205,26 +198,26 @@ function validateForm(): boolean {
 async function handleSendOtp() {
   if (!validateForm()) return
 
-  loading.value = true
   errorMessage.value = ''
 
   try {
-    const result = { success: true, message: '' }
-    // const result = await enviarOtp(consultaForm.value)
+    const result = await solicitarOTP({
+      numerosolicitud: consultaForm.value.numerosolicitud,
+      vigencia: consultaForm.value.vigencia,
+      email: consultaForm.value.email
+    })
 
-    if (result.success) {
+    if (result) {
       step.value = 'otp'
       otpDigits.value = ['', '', '', '', '', '']
       setTimeout(() => {
         otpInputRefs.value[0]?.focus()
       }, 100)
     } else {
-      errorMessage.value = result.message
+      errorMessage.value = apiError.value || 'Ocurrió un error al enviar el código. Intente nuevamente.'
     }
-  } catch {
-    errorMessage.value = 'Ocurrio un error. Intente nuevamente.'
-  } finally {
-    loading.value = false
+  } catch (error) {
+    errorMessage.value = 'Ocurrió un error. Intente nuevamente.'
   }
 }
 
@@ -259,36 +252,34 @@ function handleOtpPaste(event: ClipboardEvent) {
   otpInputRefs.value[nextIdx]?.focus()
 }
 
-// We store the verified solicitud to pass via router state
-// const verifiedSolicitud = ref<Solicitud | null>(null)
+async function handleVerifyOtp() {
+  if (otpCode.value.length < 6) return
 
-// async function handleVerifyOtp() {
-//   if (otpCode.value.length < 6) return
+  otpError.value = ''
 
-//   loading.value = true
-//   otpError.value = ''
+  try {
+    const result = await verificarOTP({
+      otp: otpCode.value,
+      email: consultaForm.value.email,
+      numerosolicitud: consultaForm.value.numerosolicitud,
+      vigencia: consultaForm.value.vigencia
+    })
 
-//   try {
-//     const result = await verificarOtp({
-//       otp: otpCode.value,
-//       email: consultaForm.value.email,
-//       numero: consultaForm.value.numero
-//     })
+    if (result && result.solicitud_id) {
+      sessionStorage.setItem('solicitud_token', result.solicitud_token)
+      sessionStorage.setItem('solicitud_expires_at', result.expires_at)
 
-//     if (result.success && result.solicitud) {
-//       verifiedSolicitud.value = result.solicitud
-//       // Store in sessionStorage for the detail view
-//       sessionStorage.setItem('solicitud_' + result.solicitud.numero, JSON.stringify(result.solicitud))
-//       router.push({ name: 'detalle-solicitud', params: { numero: result.solicitud.numero } })
-//     } else {
-//       otpError.value = result.message || 'Codigo incorrecto. Intente nuevamente.'
-//       otpDigits.value = ['', '', '', '', '', '']
-//       otpInputRefs.value[0]?.focus()
-//     }
-//   } catch {
-//     otpError.value = 'Ocurrio un error. Intente nuevamente.'
-//   } finally {
-//     loading.value = false
-//   }
-// }
+      router.push({ name: 'detalle-solicitud', params: { solicitud_id: result.solicitud_id } })
+
+    } else {
+      otpError.value = apiError.value || 'Código incorrecto. Intente nuevamente.'
+      otpDigits.value = ['', '', '', '', '', '']
+      otpInputRefs.value[0]?.focus()
+    }
+  } catch (error) {
+    otpError.value = 'Ocurrió un error. Intente nuevamente.'
+    otpDigits.value = ['', '', '', '', '', '']
+    otpInputRefs.value[0]?.focus()
+  }
+}
 </script>

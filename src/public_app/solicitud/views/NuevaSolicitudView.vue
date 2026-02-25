@@ -26,12 +26,12 @@
         </div>
         <h2 class="text-2xl font-bold text-gray-900 mb-2">Solicitud Enviada Exitosamente</h2>
         <p class="text-gray-600 max-w-md mx-auto mb-8">
-          Su solicitud ha sido registrada. Guarde los siguientes datos para dar seguimiento.
+          Su solicitud ha sido registrada. Guarde los siguientes datos, los necesitará para hacer seguimiento a su solicitud.
         </p>
         <div class="inline-flex flex-col gap-4 text-left">
           <div class="rounded-xl bg-gray-100 px-6 py-4 text-center">
             <span class="text-xs text-gray-500 font-medium uppercase tracking-wider">Numero de Solicitud</span>
-            <p class="text-lg font-bold font-mono text-[#1A4972] mt-1">{{ resultData.numerosolicitud }}</p>
+            <p class="text-lg font-bold font-mono text-[#1A4972] mt-1">{{ resultData.numerosolicitud.toString().padStart(4, '0') }}</p>
           </div>
           <div class="rounded-xl bg-gray-100 px-6 py-4 text-center">
             <span class="text-xs text-gray-500 font-medium uppercase tracking-wider">Vigencia</span>
@@ -43,10 +43,10 @@
           </div>
         </div>
         <div class="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
-          <router-link to="/consultar" class="inline-flex items-center justify-center gap-2 rounded-lg bg-[#1A4972] px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-[#143a5c] transition-colors duration-200">
+          <router-link to="/consultar" class="inline-flex items-center justify-center gap-2 rounded-lg bg-white px-6 py-3 text-sm font-semibold text-gray-900 shadow-sm hover:bg-gray-50 transition-colors duration-200">
             Consultar Solicitud
           </router-link>
-          <button @click="resetForm" class="inline-flex items-center justify-center gap-2 rounded-lg bg-white border border-gray-300 px-6 py-3 text-sm font-semibold text-gray-900 shadow-sm hover:bg-gray-50 transition-colors duration-200">
+          <button @click="resetForm" class="inline-flex items-center justify-center gap-2 rounded-lg bg-[#FFA800] px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-[#143a5c] transition-colors duration-200">
             Crear Otra Solicitud
           </button>
         </div>
