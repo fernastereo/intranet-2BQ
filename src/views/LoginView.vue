@@ -63,7 +63,7 @@
 <script setup>
   import { ref, reactive } from 'vue'
   import { useRouter } from 'vue-router'
-  import { useAuth } from '@/composables/useAuth'
+  import { useAuth } from '@/shared/composables/useAuth'
 
   const router = useRouter()
   const auth = useAuth()

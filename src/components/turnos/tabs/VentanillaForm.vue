@@ -1,12 +1,8 @@
 <template>
   <div class="sm:px-6 md:px-0">
     <div class="sm:flex sm:items-center">
-      <div class="sm:flex-auto">
-        <div class="flex items-center gap-2">
-          <h1 class="text-xl font-semibold leading-6 text-gray-900">{{ isEdit ? 'Turno ' + formattedTurnoNumber : 'Nuevo Turno' }}</h1>
-          <Badge v-if="isEdit && turnoData?.estado?.nombre" :color="turnoData.estado.class">{{ turnoData.estado.nombre }}</Badge>
-        </div>
-
+      <div class="sm:flex-auto">AQUI
+        <TurnoTitle :isEdit="isEdit.value" :turnoEstado="turnoData.value.estado" />
         <p class="mt-2 text-sm text-gray-700">
           {{ isEdit ? 'Modifique los datos del turno.' : 'Complete el formulario para crear un nuevo turno.' }}
         </p>
@@ -60,10 +56,10 @@
 <script setup>
 import { ref, computed, inject, watch, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { useTurnos } from '@/composables/useTurnos'
+import { useTurnos } from '@/shared/composables/useTurnos'
 import PersonRegistration from '../components/PersonRegistration.vue'
 import Swal from 'sweetalert2'
-import Badge from '@/components/common/Badge.vue'
+import TurnoTitle from '@/components/turnos/components/TurnoTitle.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -223,6 +219,8 @@ const handleSubmit = async () => {
 
 onMounted(() => {
   // Si es un nuevo turno, establecer fecha y hora actual
+  console.log("🚀 ~ onMounted ~ isEdit:", isEdit.value)
+  console.log("🚀 ~ onMounted ~ turnoData:", turnoData.value.estado)
   if (!isEdit.value) {
     const now = new Date()
     const year = now.getFullYear()

@@ -213,7 +213,9 @@
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ person.identification }}</td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ person.identificationTypeName }}</td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ person.personTypeName }}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ person.email }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-blue-600">
+              <a class="underline underline-offset-2" :href="`mailto:${person.email}`">{{ person.email }}</a>
+            </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ person.phone }}</td>
             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
               <button 
@@ -241,8 +243,8 @@
 <script setup>
 import { ref, reactive, onMounted, computed } from 'vue'
 import { PencilSquareIcon, TrashIcon } from '@heroicons/vue/24/outline'
-import { useTiposDocumento } from '@/composables/useTiposDocumento'
-import { useTiposResponsable } from '@/composables/useTiposResponsable'
+import { useTiposDocumento } from '@/shared/composables/useTiposDocumento'
+import { useTiposResponsable } from '@/shared/composables/useTiposResponsable'
 
 const props = defineProps({
   modelValue: {

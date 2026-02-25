@@ -28,7 +28,7 @@
   const navigation = [
     { name: 'Dashboard', href: 'dashboard', icon: HomeIcon },
     { name: 'Turnos', href: { name: 'turnos' }, icon: FolderIcon },
-    { name: 'PQR', href: { name: 'pqr' }, icon: DocumentDuplicateIcon },
+    // { name: 'Ventanilla', href: { name: 'ventanilla' }, icon: DocumentDuplicateIcon },
     { name: 'Reportes', href: { name: 'reportes' }, icon: ChartPieIcon },
   ]
 
