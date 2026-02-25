@@ -38,7 +38,7 @@ export const useSolicitudes = () => {
     loading.value = true
 
     try {
-      const response = await fetch(`${BASE_API_URL}/ventanilla.php/solicitudes/otp/request`, {
+      const response = await fetch(`${BASE_API_URL}/solicitudes/otp/request`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -67,7 +67,7 @@ export const useSolicitudes = () => {
     loading.value = true
 
     try {
-      const response = await fetch(`${BASE_API_URL}/ventanilla.php/solicitudes/otp/verify`, {
+      const response = await fetch(`${BASE_API_URL}/solicitudes/otp/verify`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -91,14 +91,30 @@ export const useSolicitudes = () => {
     }
   }
 
-  const getSolicitud = async (id) => {
+  const getSolicitud = async (id, usePublicToken = false) => {
     apiError.value = null
     loading.value = true
 
     try {
-      const response = await fetch(`${BASE_API_URL}/ventanilla.php/solicitudes/${id}`, {
+      let authToken = null
+      let headers = null
+      if (usePublicToken){
+        authToken = sessionStorage.getItem('solicitud_token')
+        headers = {
+          'Content-Type': 'application/json',
+          'X-Solicitud-Token': authToken,
+        }
+      } else {
+        authToken = localStorage.getItem('token')
+        headers = {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${authToken}`,
+        }
+      }
+
+      const response = await fetch(`${BASE_API_URL}/solicitudes/${id}`, {
         method: 'GET',
-        headers: {
+        headers: headers || {
           'Content-Type': 'application/json',
         }
       })
@@ -107,6 +123,11 @@ export const useSolicitudes = () => {
 
       if (data.status === 'error') {
         apiError.value = data.message
+        // Si el token expiró, limpiar
+        if (usePublicToken && data.message.includes('expirado')) {
+          sessionStorage.removeItem('solicitud_token')
+          sessionStorage.removeItem('solicitud_expires_at')
+        }
         return null
       }
 

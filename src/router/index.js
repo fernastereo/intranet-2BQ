@@ -29,9 +29,9 @@ const router = createRouter({
           component: () => import('@/public_app/solicitud/views/ConsultarSolicitudView.vue')
         },
         {
-          path: '/solicitud/:numero',
+          path: '/solicitud/:solicitud_id',
           name: 'detalle-solicitud',
-          // component: () => import('@/views/DetalleSolicitudView.vue'),
+          component: () => import('@/public_app/solicitud/views/DetalleSolicitudView.vue'),
           props: true
         },
       ],
