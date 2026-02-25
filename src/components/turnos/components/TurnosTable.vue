@@ -55,7 +55,7 @@
 <script setup>
 import { RouterLink } from 'vue-router'
 import { PencilSquareIcon } from '@heroicons/vue/20/solid'
-import Badge from '@/components/common/Badge.vue'
+import Badge from '@/shared/components/Badge.vue'
 
 defineProps({
   expedientes: {

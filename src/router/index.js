@@ -1,7 +1,8 @@
 import HomeView from '@/views/HomeView.vue';
 import LoginView from '@/views/LoginView.vue';
 import { createRouter, createWebHashHistory } from 'vue-router';
-import { useAuth } from '@/composables/useAuth';
+import { useAuth } from '@/shared/composables/useAuth';
+import VentanillaPublicView from '@/public_app/ventanilla/views/VentanillaPublicView.vue';
 
 const router = createRouter({
   history: createWebHashHistory(),
@@ -9,30 +10,37 @@ const router = createRouter({
     {
       path: '/',
       name: 'ventanilla-public',
-      component: () => import('@/views/VentanillaPublicView.vue'),
+      component: VentanillaPublicView,
       meta: { requiresAuth: false },
+      children: [
+        {
+          path: '',
+          name: 'ventanilla-public-home',
+          component: () => import('@/public_app/ventanilla/components/HomeView.vue'),
+        },
+        {
+          path: '/nueva-solicitud',
+          name: 'nueva-solicitud',
+          component: () => import('@/public_app/solicitud/views/NuevaSolicitudView.vue')
+        },
+        {
+          path: '/consultar',
+          name: 'consultar',
+          component: () => import('@/public_app/solicitud/views/ConsultarSolicitudView.vue')
+        },
+        {
+          path: '/solicitud/:numero',
+          name: 'detalle-solicitud',
+          // component: () => import('@/views/DetalleSolicitudView.vue'),
+          props: true
+        },
+      ],
     },
     {
       path: '/login',
       name: 'login',
       component: LoginView,
       meta: { requiresAuth: false },
-    },
-    {
-      path: '/nueva-solicitud',
-      name: 'nueva-solicitud',
-      component: () => import('@/views/DashboardView.vue')
-    },
-    {
-      path: '/consultar',
-      name: 'consultar',
-      // component: () => import('@/views/ConsultarView.vue')
-    },
-    {
-      path: '/solicitud/:numero',
-      name: 'detalle-solicitud',
-      // component: () => import('@/views/DetalleSolicitudView.vue'),
-      props: true
     },
     {
       path: '/home',

@@ -134,10 +134,10 @@
 import { ref, computed, onMounted, inject, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { TrashIcon } from '@heroicons/vue/24/outline'
-import { useTiposLicencia } from '@/composables/useTiposLicencia'
-import { useObjetosLicencia } from '@/composables/useObjetosLicencia'
-import { useTurnos } from '@/composables/useTurnos'
-import Badge from '@/components/common/Badge.vue'
+import { useTiposLicencia } from '@/shared/composables/useTiposLicencia'
+import { useObjetosLicencia } from '@/shared/composables/useObjetosLicencia'
+import { useTurnos } from '@/shared/composables/useTurnos'
+import Badge from '@/shared/components/Badge.vue'
 import Swal from 'sweetalert2'
 
 // Composable

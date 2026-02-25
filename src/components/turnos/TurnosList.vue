@@ -40,11 +40,11 @@
   import { ref, computed, onMounted } from 'vue'
   import { useRouter } from 'vue-router'
   import TurnosTable from '@/components/turnos/components/TurnosTable.vue'
-  import Pagination from '@/components/common/Pagination.vue'
-  import LoadingSpinner from '@/components/common/LoadingSpinner.vue'
-  import SearchInput from '@/components/common/SearchInput.vue'
+  import Pagination from '@/shared/components/Pagination.vue'
+  import LoadingSpinner from '@/shared/components/LoadingSpinner.vue'
+  import SearchInput from '@/shared/components/SearchInput.vue'
   import { PlusIcon, ArrowPathIcon } from '@heroicons/vue/20/solid'
-  import { useTurnos } from '@/composables/useTurnos'
+  import { useTurnos } from '@/shared/composables/useTurnos'
 
   const router = useRouter()
   const isLoading = ref(false)

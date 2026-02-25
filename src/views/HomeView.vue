@@ -90,7 +90,7 @@
   import { Dialog, DialogPanel, TransitionChild, TransitionRoot } from '@headlessui/vue'
   import { Bars3Icon, XMarkIcon } from '@heroicons/vue/24/outline'
   import { RouterLink, RouterView, useRouter } from 'vue-router'
-  import { useAuth } from '@/composables/useAuth'
+  import { useAuth } from '@/shared/composables/useAuth'
   import ActiveUser from '@/components/menubar/ActiveUser.vue'
   import MenuItems from '@/components/menubar/MenuItems.vue'
 

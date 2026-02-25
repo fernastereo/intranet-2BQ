@@ -38,7 +38,7 @@ import { ComputerDesktopIcon, WindowIcon, ClipboardDocumentCheckIcon, DocumentPl
 import MobileTabSelector from './components/MobileTabSelector.vue'
 import DesktopTabNavigation from './components/DesktopTabNavigation.vue'
 import ActionButtons from './components/ActionButtons.vue'
-import LoadingSpinner from '@/components/common/LoadingSpinner.vue'
+import LoadingSpinner from '@/shared/components/LoadingSpinner.vue'
 import VentanillaForm from './tabs/VentanillaForm.vue'
 import FormularioForm from './tabs/FormularioForm.vue'
 import DocumentacionForm from './tabs/DocumentacionForm.vue'
@@ -46,7 +46,7 @@ import NotasForm from './tabs/NotasForm.vue'
 import PreliquidacionForm from './tabs/PreliquidacionForm.vue'
 import SupervisionForm from './tabs/SupervisionForm.vue'
 import PreradicacionForm from './tabs/PreradicacionForm.vue'
-import { useTurnos } from '@/composables/useTurnos'
+import { useTurnos } from '@/shared/composables/useTurnos'
 import Swal from 'sweetalert2'
 
 const router = useRouter()
