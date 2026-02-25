@@ -29,13 +29,17 @@
           Su solicitud ha sido registrada. Guarde los siguientes datos para dar seguimiento.
         </p>
         <div class="inline-flex flex-col gap-4 text-left">
-          <div class="rounded-xl bg-gray-100 px-6 py-4">
+          <div class="rounded-xl bg-gray-100 px-6 py-4 text-center">
             <span class="text-xs text-gray-500 font-medium uppercase tracking-wider">Numero de Solicitud</span>
-            <p class="text-lg font-bold font-mono text-[#1A4972] mt-1">{{ resultData.numero }}</p>
+            <p class="text-lg font-bold font-mono text-[#1A4972] mt-1">{{ resultData.numerosolicitud }}</p>
           </div>
-          <div class="rounded-xl bg-gray-100 px-6 py-4">
+          <div class="rounded-xl bg-gray-100 px-6 py-4 text-center">
             <span class="text-xs text-gray-500 font-medium uppercase tracking-wider">Vigencia</span>
             <p class="text-lg font-bold font-mono text-gray-900 mt-1">{{ resultData.vigencia }}</p>
+          </div>
+          <!-- Código QR de la solicitud -->
+          <div class="rounded-xl bg-gray-100 px-6 py-4">
+            <img :src="resultData.qr_image" alt="Código QR de la solicitud" class="w-full h-auto" />
           </div>
         </div>
         <div class="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
@@ -62,9 +66,15 @@
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div class="md:col-span-2">
-              <label for="nombre" class="block text-sm font-medium text-gray-700 mb-1.5">Nombre Completo <span class="text-red-500">*</span></label>
-              <input id="nombre" v-model="form.nombre" type="text" class="w-full px-3.5 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A4972] focus:border-transparent transition-all" placeholder="Nombre(s) y Apellido(s)" required />
+              <label for="nombre" class="block text-sm font-medium text-gray-700 mb-1.5">Nombre Completo / Razón Social <span class="text-red-500">*</span></label>
+              <input id="nombre" v-model="form.nombre" type="text" class="w-full px-3.5 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A4972] focus:border-transparent transition-all" required />
               <p v-if="errors.nombre" class="mt-1 text-xs text-red-500">{{ errors.nombre }}</p>
+            </div>
+
+            <div>
+              <label for="identificacion" class="block text-sm font-medium text-gray-700 mb-1.5">Identificación<span class="text-red-500">*</span></label>
+              <input id="identificacion" v-model="form.identificacion" type="text" class="w-full px-3.5 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A4972] focus:border-transparent transition-all" placeholder="Número de identificación" required />
+              <p v-if="errors.identificacion" class="mt-1 text-xs text-red-500">{{ errors.identificacion }}</p>
             </div>
 
             <div>
@@ -74,15 +84,15 @@
             </div>
 
             <div>
-              <label for="telefono" class="block text-sm font-medium text-gray-700 mb-1.5">Telefono <span class="text-red-500">*</span></label>
-              <input id="telefono" v-model="form.telefono" type="tel" class="w-full px-3.5 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A4972] focus:border-transparent transition-all" placeholder="+52 555 123 4567" required />
-              <p v-if="errors.telefono" class="mt-1 text-xs text-red-500">{{ errors.telefono }}</p>
+              <label for="direccion" class="block text-sm font-medium text-gray-700 mb-1.5">Direccion<span class="text-red-500">*</span></label>
+              <input id="direccion" v-model="form.direccion" type="text" class="w-full px-3.5 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A4972] focus:border-transparent transition-all" placeholder="Calle, Numero" required />
+              <p v-if="errors.direccion" class="mt-1 text-xs text-red-500">{{ errors.direccion }}</p>
             </div>
 
-            <div class="md:col-span-2">
-              <label for="direccion" class="block text-sm font-medium text-gray-700 mb-1.5">Direccion del Inmueble <span class="text-red-500">*</span></label>
-              <input id="direccion" v-model="form.direccion" type="text" class="w-full px-3.5 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A4972] focus:border-transparent transition-all" placeholder="Calle, Numero, Colonia, Ciudad, Estado, CP" required />
-              <p v-if="errors.direccion" class="mt-1 text-xs text-red-500">{{ errors.direccion }}</p>
+            <div>
+              <label for="telefono" class="block text-sm font-medium text-gray-700 mb-1.5">Telefono <span class="text-red-500">*</span></label>
+              <input id="telefono" v-model="form.telefono" type="tel" class="w-full px-3.5 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A4972] focus:border-transparent transition-all" placeholder="555 123 4567" required />
+              <p v-if="errors.telefono" class="mt-1 text-xs text-red-500">{{ errors.telefono }}</p>
             </div>
 
             <div>
@@ -110,7 +120,7 @@
         <section class="bg-white rounded-lg shadow-sm p-6">
           <h2 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-3">
             <span class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center text-sm font-bold text-[#1A4972]">2</span>
-            Datos del Proyecto
+            Datos de la Solicitud
           </h2>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -118,7 +128,7 @@
               <label for="categoria" class="block text-sm font-medium text-gray-700 mb-1.5">Categoria <span class="text-red-500">*</span></label>
               <select id="categoria" v-model="form.categoria" class="w-full px-3.5 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A4972] focus:border-transparent transition-all" required @change="form.subcategoria = ''">
                 <option value="" disabled>Seleccione una categoria</option>
-                <!-- <option v-for="cat in Object.keys(CATEGORIAS)" :key="cat" :value="cat">{{ cat }}</option> -->
+                <option v-for="cat in categoriasDocumentos" :key="cat.id" :value="cat.id">{{ cat.nombre }}</option>
               </select>
               <p v-if="errors.categoria" class="mt-1 text-xs text-red-500">{{ errors.categoria }}</p>
             </div>
@@ -127,14 +137,14 @@
               <label for="subcategoria" class="block text-sm font-medium text-gray-700 mb-1.5">Subcategoria <span class="text-red-500">*</span></label>
               <select id="subcategoria" v-model="form.subcategoria" class="w-full px-3.5 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A4972] focus:border-transparent transition-all disabled:bg-gray-100 disabled:cursor-not-allowed" :disabled="!form.categoria" required>
                 <option value="" disabled>{{ form.categoria ? 'Seleccione una subcategoria' : 'Seleccione primero una categoria' }}</option>
-                <option v-for="sub in subcategorias" :key="sub" :value="sub">{{ sub }}</option>
+                <option v-for="sub in subcategorias" :key="sub.id" :value="sub.id">{{ sub.nombre }}</option>
               </select>
               <p v-if="errors.subcategoria" class="mt-1 text-xs text-red-500">{{ errors.subcategoria }}</p>
             </div>
 
             <div class="md:col-span-2">
               <label for="expediente" class="block text-sm font-medium text-gray-700 mb-1.5">Numero de Expediente Asociado</label>
-              <input id="expediente" v-model="form.expediente" type="text" class="w-full px-3.5 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A4972] focus:border-transparent transition-all" placeholder="EXP-2025-XXXXX (si aplica)" />
+              <input id="expediente" v-model="form.expediente" type="text" class="w-full px-3.5 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A4972] focus:border-transparent transition-all" placeholder="08001-2-25-XXXX (si aplica)" />
               <p class="mt-1 text-xs text-gray-500">Ingrese el numero de expediente si ya tiene uno asignado.</p>
             </div>
 
@@ -145,7 +155,7 @@
                 v-model="form.descripcion"
                 class="w-full px-3.5 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A4972] focus:border-transparent transition-all resize-y"
                 rows="5"
-                placeholder="Describa detalladamente el proyecto de construccion, incluyendo dimensiones, materiales a utilizar, superficie, numero de niveles, y cualquier otra informacion relevante..."
+                placeholder="Describa detalladamente su solicitud, incluyendo cualquier informacion adicional relevante..."
                 required
               ></textarea>
               <div class="flex items-center justify-between mt-1">
@@ -195,17 +205,40 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-// import { CATEGORIAS } from '@/types'
-// import { crearSolicitud } from '@/services/api'
+import { ref, computed, onMounted } from 'vue'
 import FileUpload from '@/shared/components/FileUpload.vue'
+import { useCategoriaDocumentos } from '@/shared/composables/useCategoriaDocumentos'
+import { useSolicitudes } from '@/shared/composables/useSolicitudes'
 
-const loading = ref(false)
 const submitted = ref(false)
-const resultData = ref({ numero: '', vigencia: '' })
+const resultData = ref({ numerosolicitud: '', vigencia: '', qr_image: '' })
+
+const { 
+  categoriasDocumentos, 
+  getCategoriaDocumentos, 
+  getSubCategoriasDocumentos, 
+  loading: loadingCategorias, 
+  apiError: errorCategorias 
+} = useCategoriaDocumentos()
+
+const {
+  crearSolicitud,
+  loading,
+  apiError
+} = useSolicitudes()
+
+onMounted(async () => {
+  await getCategoriaDocumentos()
+})
+
+const subcategorias = computed(() => {
+  if (!form.value.categoria) return []
+  return getSubCategoriasDocumentos(form.value.categoria) || []
+})
 
 const form = ref({
   nombre: '',
+  identificacion: '',
   email: '',
   telefono: '',
   direccion: '',
@@ -220,14 +253,11 @@ const form = ref({
 
 const errors = ref<Record<string, string>>({})
 
-const subcategorias = computed(() => {
-  // return form.value.categoria ? CATEGORIAS[form.value.categoria] || [] : []
-})
-
 function validate(): boolean {
   errors.value = {}
 
   if (!form.value.nombre.trim()) errors.value.nombre = 'El nombre es requerido'
+  if (!form.value.identificacion.trim()) errors.value.identificacion = 'La identificación es requerida'
   if (!form.value.email.trim()) errors.value.email = 'El correo electronico es requerido'
   else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.value.email)) errors.value.email = 'Ingrese un correo electronico valido'
   if (!form.value.telefono.trim()) errors.value.telefono = 'El telefono es requerido'
@@ -254,43 +284,43 @@ function validate(): boolean {
 async function handleSubmit() {
   if (!validate()) return
 
-  loading.value = true
-
   try {
-    const archivosData = form.value.archivos.map(f => ({
-      nombre: f.name,
-      tamano: f.size,
-      tipo: f.type
-    }))
+    const formData = new FormData()
+    formData.append('solicitante_nombre', form.value.nombre)
+    formData.append('solicitante_email', form.value.email)
+    formData.append('solicitante_identificacion', form.value.identificacion)
+    formData.append('representante_nombre', form.value.nombreRepresentante)
+    formData.append('representante_tipo', form.value.tipoSolicitante)
+    formData.append('telefono', form.value.telefono)
+    formData.append('direccion', form.value.direccion)
+    formData.append('categoria_id', form.value.categoria)
+    formData.append('subcategoria_id', form.value.subcategoria)
+    formData.append('expediente', form.value.expediente)
+    formData.append('descripcion', form.value.descripcion)
 
-    const result = { numero: '1234567890', vigencia: '2026-01-01' }
-    // const result = await crearSolicitud({
-    //   nombre: form.value.nombre,
-    //   email: form.value.email,
-    //   telefono: form.value.telefono,
-    //   direccion: form.value.direccion,
-    //   categoria: form.value.categoria,
-    //   subcategoria: form.value.subcategoria,
-    //   expediente: form.value.expediente,
-    //   tipoSolicitante: form.value.tipoSolicitante as 'titular' | 'representante' | 'apoderado',
-    //   nombreRepresentante: form.value.nombreRepresentante || undefined,
-    //   descripcion: form.value.descripcion,
-    //   archivos: archivosData
-    // })
+    if (form.value.archivos?.length) {
+      form.value.archivos.forEach(file => formData.append('files[]', file));
+    }
 
-    resultData.value = { numero: result.numero, vigencia: result.vigencia }
+    const result = await crearSolicitud(formData)
+
+    if (!result) {
+      alert(apiError.value || 'Ocurrió un error al enviar la solicitud. Intente nuevamente.')
+      return
+    }
+
+    resultData.value = { numerosolicitud: result.numerosolicitud, vigencia: result.vigencia, qr_image: result.qr_image }
     submitted.value = true
     window.scrollTo({ top: 0, behavior: 'smooth' })
-  } catch {
-    alert('Ocurrio un error al enviar la solicitud. Intente nuevamente.')
-  } finally {
-    loading.value = false
+  } catch (error) {
+    alert('Ocurrió un error al enviar la solicitud. Intente nuevamente. Error: ' + error.message)
   }
 }
 
 function resetForm() {
   form.value = {
     nombre: '',
+    identificacion: '',
     email: '',
     telefono: '',
     direccion: '',
@@ -300,10 +330,10 @@ function resetForm() {
     subcategoria: '',
     expediente: '',
     descripcion: '',
-    archivos: []
+    archivos: [] as File[]
   }
   errors.value = {}
   submitted.value = false
-  resultData.value = { numero: '', vigencia: '' }
+  resultData.value = { numerosolicitud: '', vigencia: '', qr_image: '' }
 }
 </script>
