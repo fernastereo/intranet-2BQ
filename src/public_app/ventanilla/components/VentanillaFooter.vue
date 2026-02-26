@@ -17,6 +17,9 @@
       2021 © Copyright. Curaduria Urbana No. 2 de Barraquilla
     </div>
   </footer>
+  <div class="text-center mt-4 mb-8">
+    <router-link to="/login" class="border-1 rounded-md px-8 py-2 font-semibold text-center text-sm text-white bg-[#FFA800] transition-all duration-200 hover:bg-[#E69500] shadow-lg">Login Intranet</router-link>
+  </div>
 </template>
 
 <script setup>
