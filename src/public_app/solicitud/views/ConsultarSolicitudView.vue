@@ -24,33 +24,33 @@
         <form @submit.prevent="handleSendOtp" novalidate class="flex flex-col gap-5">
           <!-- <form novalidate class="flex flex-col gap-5"> -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <div>
-            <label for="numerosolicitud" class="block text-sm font-medium text-gray-700 mb-1.5">Numero de Solicitud <span class="text-red-500">*</span></label>
-            <input
-              id="numerosolicitud"
-              v-model="consultaForm.numerosolicitud"
-              type="text"
-              class="w-full px-3.5 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A4972] focus:border-transparent transition-all font-mono"
-              placeholder=""
-              required
-            />
-            <p v-if="errors.numerosolicitud" class="mt-1 text-xs text-red-500">{{ errors.numerosolicitud }}</p>
-          </div>
+            <div>
+              <label for="numerosolicitud" class="block text-sm font-medium text-gray-700 mb-1.5">Numero de Solicitud <span class="text-red-500">*</span></label>
+              <input
+                id="numerosolicitud"
+                v-model="consultaForm.numerosolicitud"
+                type="text"
+                class="w-full px-3.5 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A4972] focus:border-transparent transition-all font-mono"
+                placeholder=""
+                required
+              />
+              <p v-if="errors.numerosolicitud" class="mt-1 text-xs text-red-500">{{ errors.numerosolicitud }}</p>
+            </div>
 
-          <div>
-            <label for="vigencia" class="block text-sm font-medium text-gray-700 mb-1.5">Vigencia (Año) <span class="text-red-500">*</span></label>
-            <input
-              id="vigencia"
-              v-model.number="consultaForm.vigencia"
-              type="number"
-              min="2024"
-              max="2050"
-              placeholder="2026"
-              class="w-full px-3.5 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A4972] focus:border-transparent transition-all"
-              required
-            />
-            <p v-if="errors.vigencia" class="mt-1 text-xs text-red-500">{{ errors.vigencia }}</p>
-          </div>
+            <div>
+              <label for="vigencia" class="block text-sm font-medium text-gray-700 mb-1.5">Vigencia (Año) <span class="text-red-500">*</span></label>
+              <input
+                id="vigencia"
+                v-model.number="consultaForm.vigencia"
+                type="number"
+                min="2024"
+                max="2100"
+                placeholder=""
+                class="w-full px-3.5 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A4972] focus:border-transparent transition-all"
+                required
+              />
+              <p v-if="errors.vigencia" class="mt-1 text-xs text-red-500">{{ errors.vigencia }}</p>
+            </div>
           </div>
           <div>
             <label for="email" class="block text-sm font-medium text-gray-700 mb-1.5">Correo Electronico Registrado <span class="text-red-500">*</span></label>

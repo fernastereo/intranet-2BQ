@@ -3,7 +3,7 @@
     <div class="container-fluid md:px-3">
       <div class="px-3 flex items-center justify-between h-[60px] md:h-[117px]">
         <!-- Logo -->
-        <a href="https://curaduria2barranquilla.com" class="py-2 hidden lg:block">
+        <a href="https://curaduria2barranquilla.com" class="shrink-0 py-2 hidden lg:block">
           <img 
             src="http://www.curaduria2barranquilla.com/nuevapagina/img/Logo2.png" 
             alt="logo" 
@@ -39,7 +39,7 @@
         <div class="flex items-center justify-evenly w-full">
           <ul class="hidden w-full justify-around lg:flex lg:items-center lg:space-x-1">
             <li class="text-center min-w-[110px]">
-              <a href="https://curaduria2barranquilla.com" class="nav-item-link">Curaduría</a>
+              <a href="https://curaduria2barranquilla.com" class="nav-item-link">Inicio</a>
             </li>
             <li class="text-center min-w-[110px]">
               <a href="https://curaduria2barranquilla.com/pages/curaduria.html" class="nav-item-link">Curaduría</a>
@@ -61,17 +61,6 @@
             </li>
             <li class="text-center min-w-[100px]">
               <router-link to="/" class="nav-item-link">Ventanilla</router-link>
-            </li>
-            <li class="text-center min-w-[115px]">
-              <router-link to="/login" class="nav-item-link">Intranet</router-link>
-            </li>
-            <li>
-              <a 
-                href="https://curaduria2barranquilla.com/consultas.html" 
-                class="btn-consultas"
-              >
-                Consultas
-              </a>
             </li>
           </ul>
         </div>
