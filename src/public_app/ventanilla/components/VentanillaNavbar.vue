@@ -3,13 +3,13 @@
     <div class="container-fluid md:px-3">
       <div class="px-3 flex items-center justify-between h-[60px] md:h-[117px]">
         <!-- Logo -->
-        <router-link to="/" class="py-2 hidden lg:block">
+        <a href="https://curaduria2barranquilla.com" class="py-2 hidden lg:block">
           <img 
             src="http://www.curaduria2barranquilla.com/nuevapagina/img/Logo2.png" 
             alt="logo" 
             class="h-[155px] w-auto"
           >
-        </router-link>
+        </a>
 
         <!-- Botón hamburguesa para móvil -->
         <button 
@@ -39,25 +39,25 @@
         <div class="flex items-center justify-evenly w-full">
           <ul class="hidden w-full justify-around lg:flex lg:items-center lg:space-x-1">
             <li class="text-center min-w-[110px]">
-              <router-link to="/" class="nav-item-link">Inicio</router-link>
+              <a href="https://curaduria2barranquilla.com" class="nav-item-link">Curaduría</a>
             </li>
             <li class="text-center min-w-[110px]">
-              <a href="https://curaduria2barranquilla.com/curaduria.html" target="_blank" class="nav-item-link">Curaduría</a>
+              <a href="https://curaduria2barranquilla.com/pages/curaduria.html" class="nav-item-link">Curaduría</a>
             </li>
             <li id="menu_licencia">
-              <a href="https://curaduria2barranquilla.com/licencia_y_requisitos.html" target="_blank" class="nav-item-link">Licencias y Requisitos</a>
+              <a href="https://curaduria2barranquilla.com/pages/licencia_y_requisitos.html" class="nav-item-link">Licencias y Requisitos</a>
             </li>
             <li>
-              <a href="https://curaduria2barranquilla.com/transparencia.html" target="_blank" class="nav-item-link">Transparencia</a>
+              <a href="https://curaduria2barranquilla.com/pages/transparencia.html" class="nav-item-link">Transparencia</a>
             </li>
             <li>
-              <a href="https://curaduria2barranquilla.com/descargas.html" target="_blank" class="nav-item-link">Descargas</a>
+              <a href="https://curaduria2barranquilla.com/pages/descargas.html" class="nav-item-link">Descargas</a>
             </li>
             <li class="text-center min-w-[115px]">
-              <a href="https://curaduria2barranquilla.com/contactos.html" target="_blank" class="nav-item-link">Contactos</a>
+              <a href="https://curaduria2barranquilla.com/pages/contactos.html" class="nav-item-link">Contactos</a>
             </li>
             <li class="text-center min-w-[115px]">
-              <a href="https://curaduria2barranquilla.com/publicaciones.html" target="_blank" class="nav-item-link">Publicaciones</a>
+              <a href="https://curaduria2barranquilla.com/pages/publicaciones.html" class="nav-item-link">Publicaciones</a>
             </li>
             <li class="text-center min-w-[100px]">
               <router-link to="/" class="nav-item-link">Ventanilla</router-link>
@@ -68,7 +68,6 @@
             <li>
               <a 
                 href="https://curaduria2barranquilla.com/consultas.html" 
-                target="_blank"
                 class="btn-consultas"
               >
                 Consultas
