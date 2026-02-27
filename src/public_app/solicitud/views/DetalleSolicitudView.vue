@@ -82,11 +82,11 @@
                 <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
                 <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
               </svg>
-              Datos del Proyecto
+              Datos de la Solicitud
             </h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <DataField label="Categoria ID" :value="String(solicitud.categoria.nombre)" />
-              <DataField label="Subcategoria ID" :value="String(solicitud.subcategoria.nombre)" />
+              <DataField label="Categoria" :value="String(solicitud.categoria.nombre)" />
+              <DataField label="Subcategoria" :value="String(solicitud.subcategoria.nombre)" />
               <div class="sm:col-span-2">
                 <p class="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1.5">Descripcion</p>
                 <p class="text-sm text-gray-900 leading-relaxed bg-gray-100 rounded-lg p-4">{{ solicitud.descripcion }}</p>
