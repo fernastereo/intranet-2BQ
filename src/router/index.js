@@ -21,7 +21,7 @@ const router = createRouter({
         {
           path: '/nueva-solicitud',
           name: 'nueva-solicitud',
-          component: () => import('@/public_app/solicitud/views/NuevaSolicitudView.vue')
+          component: () => import('@/views/MantenimientoView.vue')
         },
         {
           path: '/consultar',
