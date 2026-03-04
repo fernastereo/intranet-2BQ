@@ -4,6 +4,7 @@ import { createRouter, createWebHashHistory } from 'vue-router';
 import { useAuth } from '@/shared/composables/useAuth';
 import VentanillaPublicView from '@/public_app/ventanilla/views/VentanillaPublicView.vue';
 
+
 const router = createRouter({
   history: createWebHashHistory(),
   routes: [
