@@ -31,7 +31,7 @@ SPA Vue 3 + Vite con **dos sub-aplicaciones** que comparten router, composables 
 | Sub-app | Ruta base | Auth | Código |
 |---|---|---|---|
 | Portal público (ciudadanos) | `/` | No requerida | `src/public_app/` |
-| Intranet administrativa | `/home` | Requerida | `src/views/` + `src/components/` |
+| Intranet administrativa | `/home` | Requerida | `src/private_app/` |
 
 El router usa `createWebHashHistory`. Las rutas protegidas llevan `meta: { requiresAuth: true }`. El guard en `src/router/index.js` llama `checkAuth()` y usa una flag `isCheckingAuth` para prevenir loops de redirección.
 
@@ -45,10 +45,10 @@ Layout raíz: `VentanillaPublicView` → Navbar + `<RouterView>` + Footer.
 
 | Ruta | Componente | Descripción |
 |---|---|---|
-| `/` | `ventanilla/components/HomeView.vue` | Landing con hero y 3 pasos |
+| `/` | `ventanilla/views/VentanillaPublicView.vue` (layout) + `ventanilla/components/VentanillaBody.vue` | Landing con hero y 3 pasos |
 | `/nueva-solicitud` | `solicitud/views/NuevaSolicitudView.vue` | Formulario de nueva solicitud |
 | `/consultar` | `solicitud/views/ConsultarSolicitudView.vue` | Búsqueda por OTP |
-| `/solicitud/:id` | `solicitud/views/DetalleSolicitudView.vue` | Detalle con token público |
+| `/solicitud/:solicitud_id` | `solicitud/views/DetalleSolicitudView.vue` | Detalle con token público |
 
 ### Flujo ciudadano — Nueva Solicitud
 
@@ -74,41 +74,69 @@ Layout raíz: `VentanillaPublicView` → Navbar + `<RouterView>` + Footer.
 
 ## Sub-app Intranet (`src/private_app/`)
 
-Layout raíz: `private_app/layout/PrivateLayout.vue` → sidebar colapsable (HeadlessUI) + `<RouterView>`.
+Layout raíz: `private_app/layout/wrapper/PrivateLayout.vue` → sidebar colapsable (HeadlessUI) + `<RouterView>`.
 
 ### Estructura de carpetas
 
 ```
 src/private_app/
+  auth/
+    LoginView.vue                        ← ruta /login
   layout/
-    PrivateLayout.vue        ← layout con sidebar (menubar + RouterView)
-  views/
-    LoginView.vue
-    DashboardView.vue        [placeholder]
-    ReportesView.vue         [placeholder]
-    TurnosView.vue           ← shell de subruta (<RouterView />)
-    VentanillaView.vue       [placeholder, ruta comentada]
-    turnos/
-      TurnosList.vue         ← vista enrutada: lista paginada
-      TurnosForm.vue         ← vista enrutada: crear/editar turno
-  components/
-    menubar/
+    wrapper/
+      PrivateLayout.vue                  ← layout con sidebar (MenuItems + RouterView)
+    components/
       MenuItems.vue
       ActiveUser.vue
-    turnos/
-      components/            ← TurnosTable, PersonRegistration, ActionButtons, etc.
-      tabs/                  ← VentanillaForm, FormularioForm, placeholders...
+  dashboard/
+    wrapper/
+      DashboardView.vue                  [placeholder]
+  reportes/
+    wrapper/
+      ReportesView.vue                   [placeholder]
+  turnos/
+    wrapper/
+      TurnosView.vue                     ← shell de subruta (<RouterView />)
+    views/
+      TurnosList.vue                     ← lista paginada con búsqueda
+      TurnosForm.vue                     ← crear/editar turno (multi-tab, provide/inject)
+    components/
+      TurnosTable.vue                    ← tabla de expedientes
+      VentanillaForm.vue                 ← tab: info básica + PersonRegistration
+      FormularioForm.vue                 ← tab: tipo licencia + modalidades
+      DocumentacionForm.vue              [placeholder]
+      NotasForm.vue                      [placeholder]
+      PreliquidacionForm.vue             [placeholder]
+      SupervisionForm.vue                [placeholder]
+      PreradicacionForm.vue              [placeholder]
+    shared/components/
+      TurnoTitle.vue                     ← título con badge de estado
+      PersonRegistration.vue             ← sub-formulario v-model sobre array de responsables
+      ActionButtons.vue                  ← botones Cancelar / Guardar
+      MobileTabSelector.vue              ← selector de tab en móvil (select)
+      DesktopTabNavigation.vue           ← navegación de tabs en escritorio
+  ventanilla/
+    wrapper/
+      VentanillaView.vue                 ← shell de subruta (<RouterView />)
+    views/
+      VentanillaList.vue                 [placeholder]
+      VentanillaForm.vue                 [placeholder]
 ```
 
 ### Rutas y componentes
 
 | Ruta | Componente | Estado |
 |---|---|---|
-| `/home` | `views/DashboardView.vue` | Placeholder |
-| `/home/reportes` | `views/ReportesView.vue` | Placeholder |
-| `/home/turnos` | `views/turnos/TurnosList.vue` | Funcional |
-| `/home/turnos/nuevo` | `views/turnos/TurnosForm.vue` | Funcional |
-| `/home/turnos/editar/:id` | `views/turnos/TurnosForm.vue` | Funcional |
+| `/login` | `auth/LoginView.vue` | Funcional |
+| `/home` | `dashboard/wrapper/DashboardView.vue` | Placeholder |
+| `/home/dashboard` | redirect → `home` | — |
+| `/home/turnos` | `turnos/wrapper/TurnosView.vue` + `turnos/views/TurnosList.vue` | Funcional |
+| `/home/turnos/nuevo` | `turnos/views/TurnosForm.vue` | Funcional |
+| `/home/turnos/editar/:id` | `turnos/views/TurnosForm.vue` | Funcional |
+| `/home/ventanilla` | `ventanilla/wrapper/VentanillaView.vue` + `ventanilla/views/VentanillaList.vue` | Placeholder |
+| `/home/ventanilla/nuevo` | `ventanilla/views/VentanillaForm.vue` | Placeholder |
+| `/home/ventanilla/editar/:id` | `ventanilla/views/VentanillaForm.vue` | Placeholder |
+| `/home/reportes` | `reportes/wrapper/ReportesView.vue` | Placeholder |
 
 ### TurnosForm — patrón provide/inject
 
@@ -120,7 +148,7 @@ TurnosForm (provide)
   ├── updateTurnoData()  ← función para que cada tab actualice su porción
   └── registerSubmit()   ← cada tab registra su función de submit
 
-Tabs (inject):
+Tabs (inject) — ubicados en turnos/components/:
   ├── VentanillaForm     → info básica (fecha, número, dirección) + PersonRegistration
   ├── FormularioForm     → tipo licencia + modalidades (useTiposLicencia, useObjetosLicencia)
   ├── DocumentacionForm  [placeholder]
@@ -130,7 +158,7 @@ Tabs (inject):
   └── PreradicacionForm  [placeholder]
 ```
 
-`PersonRegistration.vue` es un sub-componente complejo (v-model sobre array) que gestiona responsables. Usa `useTiposDocumento` y `useTiposResponsable` para los dropdowns, y mapea IDs a labels para mostrar.
+`PersonRegistration.vue` es un sub-componente complejo (v-model sobre array) que gestiona responsables. Está en `turnos/shared/components/`. Usa `useTiposDocumento` y `useTiposResponsable` para los dropdowns, y mapea IDs a labels para mostrar.
 
 ---
 
@@ -183,13 +211,21 @@ getSolicitud(id, usePublicToken = false)
 
 ## Componentes compartidos (`src/shared/components/`)
 
-| Componente | Props clave | Eventos |
-|---|---|---|
-| `Badge.vue` | `color` (gray, green, red, blue, yellow, indigo, orange) | — |
-| `LoadingSpinner.vue` | `size`, `message`, `showMessage` | — |
-| `Pagination.vue` | `pagination` (objeto con `current_page`, `total_pages`, etc.) | `page-change` |
-| `SearchInput.vue` | `placeholder`, `debounceTime` | `input`, `search` |
-| `FileUpload.vue` | `label`, `accept`, `modelValue` | `update:modelValue` |
+Los componentes compartidos están organizados en dos subcarpetas:
+
+- `common/` — componentes de UI genéricos
+- `solicitud/` — componentes específicos del flujo de solicitud pública
+
+| Componente | Ruta | Props clave | Eventos |
+|---|---|---|---|
+| `Badge.vue` | `common/` | `color` (gray, green, red, blue, yellow, indigo, orange) | — |
+| `LoadingSpinner.vue` | `common/` | `size`, `message`, `showMessage` | — |
+| `Pagination.vue` | `common/` | `pagination` (objeto con `current_page`, `total_pages`, etc.) | `page-change` |
+| `SearchInput.vue` | `common/` | `placeholder`, `debounceTime` | `input`, `search` |
+| `FileUpload.vue` | `common/` | `label`, `accept`, `modelValue` | `update:modelValue` |
+| `DataField.vue` | `common/` | `label`, `value` | — |
+| `TimelineItem.vue` | `common/` | `label`, `date`, `active`, `isLast` | — |
+| `Sticker.vue` | `solicitud/` | `data` (objeto con numerosolicitud, vigencia, etc.) | — |
 
 ---
 
@@ -230,8 +266,9 @@ ESTADOS_COLOR  // recibido → 'bg-blue-100 text-blue-800', aprobada → 'bg-gre
 
 ## Partes sin implementar (placeholders)
 
-- `private_app/views/DashboardView.vue` — solo muestra el título
-- `private_app/views/ReportesView.vue` — solo muestra el título
-- `views/MantenimientoView.vue` — existe pero no tiene ruta activa en el router
-- Tabs de `TurnosForm`: `DocumentacionForm`, `NotasForm`, `PreliquidacionForm`, `SupervisionForm`, `PreradicacionForm`
-- Ruta `/home/ventanilla` — comentada en el router (`private_app/views/VentanillaView.vue`)
+- `private_app/dashboard/wrapper/DashboardView.vue` — solo muestra el título
+- `private_app/reportes/wrapper/ReportesView.vue` — solo muestra el título
+- `src/customviews/MantenimientoView.vue` — existe pero no tiene ruta activa en el router
+- Tabs de `TurnosForm` en `private_app/turnos/components/`: `DocumentacionForm`, `NotasForm`, `PreliquidacionForm`, `SupervisionForm`, `PreradicacionForm`
+- Módulo ventanilla intranet: `VentanillaList.vue` y `VentanillaForm.vue` son placeholders, pero la ruta `/home/ventanilla` YA ESTÁ ACTIVA en el router
+

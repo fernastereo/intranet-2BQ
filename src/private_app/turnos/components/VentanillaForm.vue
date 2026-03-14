@@ -57,9 +57,9 @@
 import { ref, computed, inject, watch, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useTurnos } from '@/shared/composables/useTurnos'
-import PersonRegistration from '../shared/components/PersonRegistration.vue'
+import PersonRegistration from '@/private_app/turnos/shared/components/PersonRegistration.vue'
 import Swal from 'sweetalert2'
-import TurnoTitle from '@/private_app/turnos/components/TurnoTitle.vue'
+import TurnoTitle from '@/private_app/turnos/shared/components/TurnoTitle.vue'
 
 const router = useRouter()
 const route = useRoute()
