@@ -137,7 +137,7 @@ import { TrashIcon } from '@heroicons/vue/24/outline'
 import { useTiposLicencia } from '@/shared/composables/useTiposLicencia'
 import { useObjetosLicencia } from '@/shared/composables/useObjetosLicencia'
 import { useTurnos } from '@/shared/composables/useTurnos'
-import Badge from '@/shared/components/Badge.vue'
+import Badge from '@/shared/components/common/Badge.vue'
 import Swal from 'sweetalert2'
 
 // Composable

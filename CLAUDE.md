@@ -72,19 +72,43 @@ Layout raíz: `VentanillaPublicView` → Navbar + `<RouterView>` + Footer.
 
 ---
 
-## Sub-app Intranet (`src/views/` + `src/components/`)
+## Sub-app Intranet (`src/private_app/`)
 
-Layout raíz: `HomeView.vue` → sidebar colapsable (HeadlessUI) + `<RouterView>`.
+Layout raíz: `private_app/layout/PrivateLayout.vue` → sidebar colapsable (HeadlessUI) + `<RouterView>`.
+
+### Estructura de carpetas
+
+```
+src/private_app/
+  layout/
+    PrivateLayout.vue        ← layout con sidebar (menubar + RouterView)
+  views/
+    LoginView.vue
+    DashboardView.vue        [placeholder]
+    ReportesView.vue         [placeholder]
+    TurnosView.vue           ← shell de subruta (<RouterView />)
+    VentanillaView.vue       [placeholder, ruta comentada]
+    turnos/
+      TurnosList.vue         ← vista enrutada: lista paginada
+      TurnosForm.vue         ← vista enrutada: crear/editar turno
+  components/
+    menubar/
+      MenuItems.vue
+      ActiveUser.vue
+    turnos/
+      components/            ← TurnosTable, PersonRegistration, ActionButtons, etc.
+      tabs/                  ← VentanillaForm, FormularioForm, placeholders...
+```
 
 ### Rutas y componentes
 
 | Ruta | Componente | Estado |
 |---|---|---|
-| `/home` | `DashboardView.vue` | Placeholder |
-| `/home/reportes` | `ReportesView.vue` | Placeholder |
-| `/home/turnos` | `TurnosList.vue` | Funcional |
-| `/home/turnos/nuevo` | `TurnosForm.vue` | Funcional |
-| `/home/turnos/editar/:id` | `TurnosForm.vue` | Funcional |
+| `/home` | `views/DashboardView.vue` | Placeholder |
+| `/home/reportes` | `views/ReportesView.vue` | Placeholder |
+| `/home/turnos` | `views/turnos/TurnosList.vue` | Funcional |
+| `/home/turnos/nuevo` | `views/turnos/TurnosForm.vue` | Funcional |
+| `/home/turnos/editar/:id` | `views/turnos/TurnosForm.vue` | Funcional |
 
 ### TurnosForm — patrón provide/inject
 
@@ -206,8 +230,8 @@ ESTADOS_COLOR  // recibido → 'bg-blue-100 text-blue-800', aprobada → 'bg-gre
 
 ## Partes sin implementar (placeholders)
 
-- `DashboardView.vue` — solo muestra el título
-- `ReportesView.vue` — solo muestra el título
-- `MantenimientoView.vue` — existe pero no tiene ruta activa en el router
+- `private_app/views/DashboardView.vue` — solo muestra el título
+- `private_app/views/ReportesView.vue` — solo muestra el título
+- `views/MantenimientoView.vue` — existe pero no tiene ruta activa en el router
 - Tabs de `TurnosForm`: `DocumentacionForm`, `NotasForm`, `PreliquidacionForm`, `SupervisionForm`, `PreradicacionForm`
-- Ruta `/home/ventanilla` — comentada en el router
+- Ruta `/home/ventanilla` — comentada en el router (`private_app/views/VentanillaView.vue`)

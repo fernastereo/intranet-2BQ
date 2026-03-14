@@ -79,6 +79,7 @@
 
     <main class="py-10 lg:pl-72">
       <div class="px-4 sm:px-6 lg:px-8">
+        <!-- Contenido de las rutas -->
         <RouterView />
       </div>
     </main>
@@ -91,8 +92,8 @@
   import { Bars3Icon, XMarkIcon } from '@heroicons/vue/24/outline'
   import { RouterLink, RouterView, useRouter } from 'vue-router'
   import { useAuth } from '@/shared/composables/useAuth'
-  import ActiveUser from '@/components/menubar/ActiveUser.vue'
-  import MenuItems from '@/components/menubar/MenuItems.vue'
+  import ActiveUser from '@/private_app/layout/components/ActiveUser.vue'
+  import MenuItems from '@/private_app/layout/components/MenuItems.vue'
 
   const { isAuthenticated, logout } = useAuth()
   const router = useRouter()

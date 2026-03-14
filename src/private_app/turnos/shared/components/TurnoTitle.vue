@@ -7,7 +7,7 @@
 
 <script setup>
 import { computed, toRefs } from 'vue';
-import Badge from '@/shared/components/Badge.vue';
+import Badge from '@/shared/components/common/Badge.vue';
 
 const props = defineProps({
   isEdit: {

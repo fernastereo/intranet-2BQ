@@ -266,8 +266,8 @@
   import { useSolicitudes } from '@/shared/composables/useSolicitudes'
   import { useRoute } from 'vue-router'
   import { useRouter } from 'vue-router'
-  import DataField from '@/public_app/shared/components/DataField.vue'
-  import TimelineItem from '@/public_app/shared/components/TimelineItem.vue'
+  import DataField from '@/shared/components/common/DataField.vue'
+  import TimelineItem from '@/shared/components/common/TimelineItem.vue'
 
   const router = useRouter()
   const route = useRoute()

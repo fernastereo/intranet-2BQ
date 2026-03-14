@@ -39,10 +39,10 @@
 <script setup>
   import { ref, computed, onMounted } from 'vue'
   import { useRouter } from 'vue-router'
-  import TurnosTable from '@/components/turnos/components/TurnosTable.vue'
-  import Pagination from '@/shared/components/Pagination.vue'
-  import LoadingSpinner from '@/shared/components/LoadingSpinner.vue'
-  import SearchInput from '@/shared/components/SearchInput.vue'
+  import TurnosTable from '@/private_app/turnos/components/TurnosTable.vue'
+  import Pagination from '@/shared/components/common/Pagination.vue'
+  import LoadingSpinner from '@/shared/components/common/LoadingSpinner.vue'
+  import SearchInput from '@/shared/components/common/SearchInput.vue'
   import { PlusIcon, ArrowPathIcon } from '@heroicons/vue/20/solid'
   import { useTurnos } from '@/shared/composables/useTurnos'
 

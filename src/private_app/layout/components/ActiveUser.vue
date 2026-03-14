@@ -13,7 +13,7 @@
 <script setup>
   import { ref, onMounted } from 'vue'
   import { useAuth } from '@/shared/composables/useAuth'
-  import LoadingSpinner from '@/shared/components/LoadingSpinner.vue'
+  import LoadingSpinner from '@/shared/components/common/LoadingSpinner.vue'
   
   const isLoading = ref(false);
 

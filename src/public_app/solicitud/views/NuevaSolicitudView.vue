@@ -205,8 +205,8 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import FileUpload from '@/shared/components/FileUpload.vue'
-import Sticker from '@/public_app/solicitud/components/Sticker.vue'
+import FileUpload from '@/shared/components/common/FileUpload.vue'
+import Sticker from '@/shared/components/solicitud/Sticker.vue'
 import { useCategoriaDocumentos } from '@/shared/composables/useCategoriaDocumentos'
 import { useSolicitudes } from '@/shared/composables/useSolicitudes'
 
