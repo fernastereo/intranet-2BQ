@@ -11,7 +11,7 @@
           Volver al inicio
         </router-link>
         <h1 class="text-3xl md:text-4xl font-bold text-white tracking-tight">Nueva Solicitud</h1>
-        <p class="mt-2 text-blue-200">Complete todos los campos requeridos para iniciar su tramite.</p>
+        <p class="mt-2 text-blue-200">Complete todos los campos requeridos para iniciar su trámite.</p>
       </div>
     </div>
 
@@ -30,10 +30,10 @@
         </p>
         <div class="inline-flex flex-col gap-4 text-left">
           <div class="rounded-xl bg-gray-100 px-6 py-4 text-center">
-            <span class="text-xs text-gray-500 font-medium uppercase tracking-wider">Numero de Solicitud</span>
-            <p class="text-lg font-bold font-mono text-[#1A4972] mt-1">{{ resultData.numerosolicitud.toString().padStart(4, '0') }}</p>
+            <span class="text-xs text-gray-500 font-medium uppercase tracking-wider">Número de Solicitud</span>
+            <p class="text-lg font-bold font-mono text-[#1A4972] mt-1">{{ resultData.configuracion.prefijoVentanilla }}-{{ resultData.vigencia }}-{{ resultData.numerosolicitud?.toString().padStart(4, '0') }}</p>
           </div>
-          <div class="rounded-xl bg-gray-100 px-6 py-4 text-center">
+          <div class="rounded-xl bg-gray-100 px-6 py-4 text-center hidden">
             <span class="text-xs text-gray-500 font-medium uppercase tracking-wider">Vigencia</span>
             <p class="text-lg font-bold font-mono text-gray-900 mt-1">{{ resultData.vigencia }}</p>
           </div>
@@ -45,7 +45,7 @@
         <div class="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
           <Sticker :data="resultData" />
           <button @click="resetForm" class="inline-flex items-center justify-center gap-2 rounded-lg bg-[#FFA800] px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-[#143a5c] transition-colors duration-200">
-            Crear Otra Solicitud
+            Crear Una Nueva Solicitud
           </button>
         </div>
       </div>
@@ -77,19 +77,19 @@
             </div>
 
             <div>
-              <label for="email" class="block text-sm font-medium text-gray-700 mb-1.5">Correo Electronico <span class="text-red-500">*</span></label>
+              <label for="email" class="block text-sm font-medium text-gray-700 mb-1.5">Correo Electrónico <span class="text-red-500">*</span></label>
               <input id="email" v-model="form.email" type="email" class="w-full px-3.5 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A4972] focus:border-transparent transition-all" placeholder="correo@ejemplo.com" required />
               <p v-if="errors.email" class="mt-1 text-xs text-red-500">{{ errors.email }}</p>
             </div>
 
             <div>
-              <label for="direccion" class="block text-sm font-medium text-gray-700 mb-1.5">Direccion<span class="text-red-500">*</span></label>
-              <input id="direccion" v-model="form.direccion" type="text" class="w-full px-3.5 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A4972] focus:border-transparent transition-all" placeholder="Calle, Numero" required />
+              <label for="direccion" class="block text-sm font-medium text-gray-700 mb-1.5">Dirección<span class="text-red-500">*</span></label>
+              <input id="direccion" v-model="form.direccion" type="text" class="w-full px-3.5 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A4972] focus:border-transparent transition-all" placeholder="Calle, Número" required />
               <p v-if="errors.direccion" class="mt-1 text-xs text-red-500">{{ errors.direccion }}</p>
             </div>
 
             <div>
-              <label for="telefono" class="block text-sm font-medium text-gray-700 mb-1.5">Telefono <span class="text-red-500">*</span></label>
+              <label for="telefono" class="block text-sm font-medium text-gray-700 mb-1.5">Teléfono <span class="text-red-500">*</span></label>
               <input id="telefono" v-model="form.telefono" type="tel" class="w-full px-3.5 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A4972] focus:border-transparent transition-all" placeholder="555 123 4567" required />
               <p v-if="errors.telefono" class="mt-1 text-xs text-red-500">{{ errors.telefono }}</p>
             </div>
@@ -97,7 +97,7 @@
             <div>
               <label for="tipoSolicitante" class="block text-sm font-medium text-gray-700 mb-1.5">Tipo de Solicitante <span class="text-red-500">*</span></label>
               <select id="tipoSolicitante" v-model="form.tipoSolicitante" class="w-full px-3.5 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A4972] focus:border-transparent transition-all" required>
-                <option value="" disabled>Seleccione una opcion</option>
+                <option value="" disabled>Seleccione una opción</option>
                 <option value="titular">Titular</option>
                 <option value="representante">Representante Legal</option>
                 <option value="apoderado">Apoderado</option>
@@ -115,7 +115,7 @@
           </div>
         </section>
 
-        <!-- Section 2: Datos del Proyecto -->
+        <!-- Section 2: Datos de la Solicitud -->
         <section class="bg-white rounded-lg shadow-sm p-6">
           <h2 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-3">
             <span class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center text-sm font-bold text-[#1A4972]">2</span>
@@ -124,27 +124,42 @@
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
-              <label for="categoria" class="block text-sm font-medium text-gray-700 mb-1.5">Categoria <span class="text-red-500">*</span></label>
+              <label for="categoria" class="block text-sm font-medium text-gray-700 mb-1.5">Categoría <span class="text-red-500">*</span></label>
               <select id="categoria" v-model="form.categoria" class="w-full px-3.5 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A4972] focus:border-transparent transition-all" required @change="form.subcategoria = ''">
-                <option value="" disabled>Seleccione una categoria</option>
+                <option value="" disabled>Seleccione una categoría</option>
                 <option v-for="cat in categoriasDocumentos" :key="cat.id" :value="cat.id">{{ cat.nombre }}</option>
               </select>
               <p v-if="errors.categoria" class="mt-1 text-xs text-red-500">{{ errors.categoria }}</p>
             </div>
 
             <div>
-              <label for="subcategoria" class="block text-sm font-medium text-gray-700 mb-1.5">Subcategoria <span class="text-red-500">*</span></label>
+              <label for="subcategoria" class="block text-sm font-medium text-gray-700 mb-1.5">Subcategoría <span class="text-red-500">*</span></label>
               <select id="subcategoria" v-model="form.subcategoria" class="w-full px-3.5 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A4972] focus:border-transparent transition-all disabled:bg-gray-100 disabled:cursor-not-allowed" :disabled="!form.categoria" required>
-                <option value="" disabled>{{ form.categoria ? 'Seleccione una subcategoria' : 'Seleccione primero una categoria' }}</option>
+                <option value="" disabled>{{ form.categoria ? 'Seleccione una subcategoría' : 'Seleccione primero una categoría' }}</option>
                 <option v-for="sub in subcategorias" :key="sub.id" :value="sub.id">{{ sub.nombre }}</option>
               </select>
               <p v-if="errors.subcategoria" class="mt-1 text-xs text-red-500">{{ errors.subcategoria }}</p>
             </div>
 
-            <div class="md:col-span-2">
-              <label for="expediente" class="block text-sm font-medium text-gray-700 mb-1.5">Numero de Expediente Asociado</label>
-              <input id="expediente" v-model="form.expediente" type="text" class="w-full px-3.5 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A4972] focus:border-transparent transition-all" placeholder="08001-2-25-XXXX (si aplica)" />
-              <p class="mt-1 text-xs text-gray-500">Ingrese el numero de expediente si ya tiene uno asignado.</p>
+            <div class="grid grid-cols-2 gap-5">
+              <div>
+                <label for="folios" class="block text-sm font-medium text-gray-700 mb-1.5">Número de Folios</label>
+                <input id="folios" v-model="form.folios" type="number" class="w-full px-3.5 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A4972] focus:border-transparent transition-all" placeholder="0" />
+                <p class="mt-1 text-xs text-gray-500">Ingrese el número de folios.</p>
+              </div>
+              <div>
+                <label for="anexos" class="block text-sm font-medium text-gray-700 mb-1.5">Número de Anexos</label>
+                <input id="anexos" v-model="form.anexos" type="number" class="w-full px-3.5 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A4972] focus:border-transparent transition-all" placeholder="0" />
+                <p class="mt-1 text-xs text-gray-500">Ingrese el número de anexos.</p>
+              </div>
+            </div>
+            <div v-if="subcategoriaSeleccionada?.incorporaexpediente">
+              <label for="expediente" class="block text-sm font-medium text-gray-700 mb-1.5">Número de Expediente Asociado <span class="text-red-500">*</span></label>
+              <input id="expediente" v-model="form.expediente" type="text" class="w-full px-3.5 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A4972] focus:border-transparent transition-all" placeholder="08001-2-25-XXXX" :required="subcategoriaSeleccionada?.incorporaexpediente" />
+              <div class="flex items-center justify-between mt-1">
+                <p v-if="errors.expediente" class="text-xs text-red-500">{{ errors.expediente }}</p>
+                <p v-else class="mt-1 text-xs text-gray-500">Ingrese el numero de expediente si ya tiene uno asignado.</p>
+              </div>
             </div>
 
             <div class="md:col-span-2">
@@ -173,7 +188,7 @@
           </h2>
 
           <p class="text-sm text-gray-600 mb-6 leading-relaxed">
-            Adjunte todos los documentos requeridos para su solicitud. Los archivos deben estar en formato PDF, JPG o PNG con un tamano maximo de 10 MB por archivo.
+            Adjunte todos los documentos requeridos para su solicitud. Los archivos deben estar en formato PDF, JPG o PNG con un tamaño máximo de 10 MB por archivo.
           </p>
 
           <FileUpload v-model="form.archivos" label="Seleccionar Archivos" />
@@ -203,13 +218,47 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
+// 1. Imports
 import { ref, computed, onMounted } from 'vue'
 import FileUpload from '@/shared/components/common/FileUpload.vue'
 import Sticker from '@/shared/components/solicitud/Sticker.vue'
 import { useCategoriaDocumentos } from '@/shared/composables/useCategoriaDocumentos'
 import { useSolicitudes } from '@/shared/composables/useSolicitudes'
+import { useAppSettings } from '@/shared/composables/useAppSettings'
+import Swal from 'sweetalert2'
 
+// 2. Composables
+const { settings } = useAppSettings()
+const { 
+  categoriasDocumentos, 
+  getCategoriaDocumentos, 
+  getSubCategoriasDocumentos, 
+} = useCategoriaDocumentos()
+const {
+  crearSolicitud,
+  loading,
+  apiError
+} = useSolicitudes()
+
+// 3. Estado Reactivo
+const form = ref({
+  nombre: '',
+  identificacion: '',
+  email: '',
+  telefono: '',
+  direccion: '',
+  tipoSolicitante: '',
+  nombreRepresentante: '',
+  categoria: '',
+  subcategoria: '',
+  expediente: '',
+  descripcion: '',
+  folios: '',
+  anexos: '',
+  archivos: []
+})
+const errors = ref({})
 const submitted = ref(false)
 const resultData = ref({ 
   fecha: '', 
@@ -221,50 +270,61 @@ const resultData = ref({
   solicitante_nombre: '', 
   solicitante_email: '', 
   solicitante_identificacion: '', 
-  usuario_receptor: '' 
+  usuario_receptor: '',
+  configuracion: {
+    representante: '',
+    nombreCuraduria: '',
+    prefijoVentanilla: '',
+    logoUrl: ''
+  }
 })
 
-const { 
-  categoriasDocumentos, 
-  getCategoriaDocumentos, 
-  getSubCategoriasDocumentos, 
-  loading: loadingCategorias, 
-  apiError: errorCategorias 
-} = useCategoriaDocumentos()
-
-const {
-  crearSolicitud,
-  loading,
-  apiError
-} = useSolicitudes()
-
-onMounted(async () => {
-  await getCategoriaDocumentos()
+const configuracion = computed(() => {
+  const encargadoProvisional = settings.value?.encargado === 1 ? '(E)' : settings.value?.provisional === 1 ? '(P)' : ''
+  return {
+    representante: settings.value?.representante || '',
+    nombreCuraduria: `${settings.value?.nombre} ${encargadoProvisional}` || '',
+    prefijoVentanilla: settings.value?.prefijo_ventanilla || '',
+    logoUrl: `/src/assets/${settings.value?.logo}`
+  }
 })
 
 const subcategorias = computed(() => {
   if (!form.value.categoria) return []
-  return getSubCategoriasDocumentos(form.value.categoria) || []
+  const subcategorias = getSubCategoriasDocumentos(form.value.categoria) || []
+  return subcategorias
 })
 
-const form = ref({
-  nombre: '',
-  identificacion: '',
-  email: '',
-  telefono: '',
-  direccion: '',
-  tipoSolicitante: '' as '' | 'titular' | 'representante' | 'apoderado',
-  nombreRepresentante: '',
-  categoria: '',
-  subcategoria: '',
-  expediente: '',
-  descripcion: '',
-  archivos: [] as File[]
+const subcategoriaSeleccionada = computed(() => {
+  if (!form.value.subcategoria || !subcategorias.value.length) return null
+  return subcategorias.value.find(sub => sub.id === form.value.subcategoria)
 })
 
-const errors = ref<Record<string, string>>({})
+// 4. Funciones
+const buildFormData = (formData) => {
+  const fd = new FormData()
+  fd.append('solicitante_nombre', formData.nombre)
+  fd.append('solicitante_email', formData.email)
+  fd.append('solicitante_identificacion', formData.identificacion)
+  fd.append('representante_nombre', formData.nombreRepresentante)
+  fd.append('representante_tipo', formData.tipoSolicitante)
+  fd.append('telefono', formData.telefono)
+  fd.append('direccion', formData.direccion)
+  fd.append('categoria_id', formData.categoria)
+  fd.append('subcategoria_id', formData.subcategoria)
+  fd.append('expediente', formData.expediente)
+  fd.append('folios', formData.folios)
+  fd.append('anexos', formData.anexos)
+  fd.append('descripcion', formData.descripcion)
 
-function validate(): boolean {
+  if (formData.archivos?.length) {
+    formData.archivos.forEach(file => fd.append('files[]', file))
+  }
+
+  return fd
+}
+
+const validate = () => {
   errors.value = {}
 
   if (!form.value.nombre.trim()) errors.value.nombre = 'El nombre es requerido'
@@ -280,6 +340,9 @@ function validate(): boolean {
 
   if (!form.value.categoria) errors.value.categoria = 'Seleccione una categoria'
   if (!form.value.subcategoria) errors.value.subcategoria = 'Seleccione una subcategoria'
+  if (subcategoriaSeleccionada.value?.incorporaexpediente && !form.value.expediente?.trim()) {
+    errors.value.expediente = 'El número de expediente es requerido para esta subcategoría'
+  }
   if (!form.value.descripcion.trim()) errors.value.descripcion = 'La descripcion es requerida'
   else if (form.value.descripcion.length > 2000) errors.value.descripcion = 'La descripcion no puede exceder 2000 caracteres'
 
@@ -292,54 +355,54 @@ function validate(): boolean {
   return Object.keys(errors.value).length === 0
 }
 
-async function handleSubmit() {
+const handleSubmit = async () => {
   if (!validate()) return
 
   try {
-    const formData = new FormData()
-    formData.append('solicitante_nombre', form.value.nombre)
-    formData.append('solicitante_email', form.value.email)
-    formData.append('solicitante_identificacion', form.value.identificacion)
-    formData.append('representante_nombre', form.value.nombreRepresentante)
-    formData.append('representante_tipo', form.value.tipoSolicitante)
-    formData.append('telefono', form.value.telefono)
-    formData.append('direccion', form.value.direccion)
-    formData.append('categoria_id', form.value.categoria)
-    formData.append('subcategoria_id', form.value.subcategoria)
-    formData.append('expediente', form.value.expediente)
-    formData.append('descripcion', form.value.descripcion)
-
-    if (form.value.archivos?.length) {
-      form.value.archivos.forEach(file => formData.append('files[]', file));
-    }
-
+    const formData = buildFormData(form.value)
     const result = await crearSolicitud(formData)
 
     if (!result) {
-      alert(apiError.value || 'Ocurrió un error al enviar la solicitud. Intente nuevamente.')
+      Swal.fire({
+        icon: 'error',
+        title: 'Error al enviar la solicitud',
+        text: apiError.value || 'Ocurrió un error al enviar la solicitud. Intente nuevamente.',
+        showConfirmButton: true
+      })
       return
     }
 
+    const datosConfiguracion = configuracion.value;
+
     resultData.value = { 
-      fecha: result.fecha,
-      hora: result.hora,
       numerosolicitud: result.numerosolicitud, 
       vigencia: result.vigencia, 
-      qr_image: result.qr_image,
-      origen: result.origen,
+      fecha: result.fecha,
+      hora: result.hora,
       solicitante_nombre: result.solicitante_nombre,
-      solicitante_email: result.solicitante_email,
       solicitante_identificacion: result.solicitante_identificacion,
-      usuario_receptor: result.usuario_receptor
+      solicitante_email: result.solicitante_email,
+      folios: result.folios,
+      anexos: result.anexos,
+      origen: result.origen,
+      usuario_receptor: result.usuario_receptor,
+      qr_image: result.qr_image,
+      configuracion: datosConfiguracion
     }
+
     submitted.value = true
     window.scrollTo({ top: 0, behavior: 'smooth' })
   } catch (error) {
-    alert('Ocurrió un error al enviar la solicitud. Intente nuevamente. Error: ' + error.message)
+    Swal.fire({
+      icon: 'error',
+      title: 'Error al enviar la solicitud',
+      text: 'Ocurrió un error al enviar la solicitud. Intente nuevamente. Error: ' + error.message,
+      showConfirmButton: true
+    })
   }
 }
 
-function resetForm() {
+const resetForm = () => {
   form.value = {
     nombre: '',
     identificacion: '',
@@ -352,9 +415,16 @@ function resetForm() {
     subcategoria: '',
     expediente: '',
     descripcion: '',
-    archivos: [] as File[]
+    folios: '',
+    anexos: '',
+    archivos: []
   }
   errors.value = {}
   submitted.value = false
 }
+
+// 5. Lifecycle Hooks
+onMounted(async () => {
+  await getCategoriaDocumentos('web')
+})
 </script>

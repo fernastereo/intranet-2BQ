@@ -1,12 +1,12 @@
 <template>
-  <div class="hidden">
-    <div id="pdf-content" class="w-[430px] text-sm border-1 rounded-lg p-2 mt-2">
+  <div>
+    <div id="pdf-content" class="w-[430px] text-sm border-1 rounded-lg p-2 mt-2 absolute top-0 left-[-1500px]">
       <!-- Encabezado -->
       <div class="inline-flex items-center gap-1 w-full mx-2">
-        <img :src="configuracion.logoUrl" alt="Logo V.U." class="w-25 h-14 self-start shrink-0" />
+        <img :src="data.configuracion.logoUrl" alt="Logo V.U." class="w-25 h-14 self-start shrink-0" />
         <div class="flex flex-col items-center justify-center">
-          <p class="text-center text-xs uppercase font-bold">{{ configuracion.representante }}</p>
-          <p class="text-center text-xs uppercase">{{ configuracion.nombreCuraduria }}</p>
+          <p class="text-center text-xs uppercase font-bold">{{ data.configuracion.representante }}</p>
+          <p class="text-center text-xs uppercase">{{ data.configuracion.nombreCuraduria }}</p>
           <p class="text-center text-xs uppercase font-bold">VENTANILLA UNICA V.U.</p>
           <p class="text-center text-xs uppercase font-bold">SELLO DE RADICACION DE DOCUMENTOS</p>
         </div>
@@ -14,7 +14,7 @@
 
       <div class="px-8 mt-1">
         <!-- Separador -->
-        <div class="w-full">
+        <div class="w-full mt-2">
           <div class="w-full border-b-black border-b-1"></div>
         </div>
 
@@ -24,7 +24,7 @@
             <p class="text-xs">
               N° de Radicado: 
               <span class="font-semibold">
-                {{ configuracion.prefijoVentanilla }}-{{ data.numerosolicitud?.toString().padStart(4, '0') }}-{{ data.vigencia }}
+                {{ data.configuracion.prefijoVentanilla }}-{{ data.vigencia }}-{{ data.numerosolicitud?.toString().padStart(4, '0') }}
               </span>
             </p>
           </div>
@@ -35,7 +35,7 @@
         </div>
 
         <!-- Separador -->
-        <div class="w-full">
+        <div class="w-full mt-2">
           <div class="w-full border-b-black border-b-1"></div>
         </div>
 
@@ -50,7 +50,7 @@
         </div>
 
         <!-- Separador -->
-        <div class="w-full">
+        <div class="w-full mt-2">
           <div class="w-full border-b-black border-b-1"></div>
         </div>
 
@@ -59,6 +59,10 @@
           <div class="shrink-0 text-justify flex flex-col gap-1">
             <p class="text-xs">Folios: <span class="font-semibold">{{ data.folios || '-' }}</span></p>
             <p class="text-xs">Anexos: <span class="font-semibold">{{ data.anexos || '-' }}</span></p>
+            <p class="text-xs mt-10">
+              {{ data.origen === 'web' ? 'Origen: ' : 'Recibido por: ' }}
+              <span class="font-semibold">{{ data.origen === 'web' ? 'Vetanilla Web' : data.usuario_receptor }}</span>
+            </p>
           </div>
           <div class="shrink-0 flex flex-col">
             <img v-if="data.qr_image" :src="data.qr_image" alt="Código QR de la solicitud" class="w-[100px]" />
@@ -70,7 +74,7 @@
     <!-- Botón de impresión -->
     <button 
       @click="handlePrint" 
-      class="inline-flex items-center justify-center gap-2 rounded-lg bg-[#FFA800] px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-[#e69700] transition-colors duration-200 mt-4"
+      class="inline-flex items-center justify-center gap-2 rounded-lg bg-[#FFA800] px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-[#e69700] transition-colors duration-200"
     >
       <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <polyline points="6 9 6 2 18 2 18 9" />
@@ -83,10 +87,9 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
 import html2canvas from 'html2canvas'
 import jsPDF from 'jspdf'
-import { useAppSettings } from '@/shared/composables/useAppSettings'
+
 
 const props = defineProps({
   data: {
@@ -99,24 +102,19 @@ const props = defineProps({
       hora: '',
       solicitante_nombre: '',
       solicitante_identificacion: '',
+      solicitante_email: '',
       folios: '',
       anexos: '',
-      qr_image: ''
+      origen: '',
+      usuario_receptor: '',
+      qr_image: '',
+      configuracion: {
+        representante: '',
+        nombreCuraduria: '',
+        prefijoVentanilla: '',
+        logoUrl: ''
+      }
     })
-  }
-})
-
-const { settings } = useAppSettings()
-
-const configuracion = computed(() => {
-
-  const encargadoProvisional = settings.value?.encargado === 1 ? '(E)' : settings.value?.provisional === 1 ? '(P)' : ''
-
-  return {
-    representante: settings.value?.representante || '',
-    nombreCuraduria: `${settings.value?.nombre} ${encargadoProvisional}` || '',
-    prefijoVentanilla: settings.value?.prefijo_ventanilla || '',
-    logoUrl: `/src/assets/${settings.value?.logo}`
   }
 })
 
@@ -128,6 +126,7 @@ const handlePrint = async () => {
     useCORS: true,
     scale: 2,
   })
+
   const imgData = canvas.toDataURL('image/png')
 
   const pdf = new jsPDF({
@@ -136,6 +135,7 @@ const handlePrint = async () => {
     format: 'letter'
   })
 
+  const fileName = `${props.data.configuracion.prefijoVentanilla }-${props.data.vigencia }-${props.data.numerosolicitud?.toString().padStart(4, '0') }.pdf`
   const pageWidth = pdf.internal.pageSize.getWidth()
   const pageHeight = pdf.internal.pageSize.getHeight()
 
@@ -150,6 +150,7 @@ const handlePrint = async () => {
   const y = margin
 
   pdf.addImage(imgData, 'PNG', x, y, imgWidth, imgHeight)
-  pdf.save(`comprobante-${props.data.numerosolicitud}.pdf`)
+
+  pdf.save(fileName)
 }
 </script>

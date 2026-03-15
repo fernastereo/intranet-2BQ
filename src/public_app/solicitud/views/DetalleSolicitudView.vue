@@ -13,7 +13,7 @@
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <h1 class="text-3xl md:text-4xl font-bold text-white tracking-tight">Detalle de Solicitud</h1>
-            <p v-if="solicitud" class="mt-1 text-blue-200 font-mono text-sm">{{ solicitud.numerosolicitud.toString().padStart(4, '0') }}-{{ solicitud.vigencia }}</p>
+            <p v-if="solicitud" class="mt-1 text-blue-200 font-mono text-sm">{{ settings.prefijo_ventanilla }}-{{ solicitud.vigencia }}-{{ solicitud.numerosolicitud.toString().padStart(4, '0') }}</p>
           </div>
           <span
             v-if="solicitud"
@@ -87,6 +87,9 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <DataField label="Categoria" :value="String(solicitud.categoria.nombre)" />
               <DataField label="Subcategoria" :value="String(solicitud.subcategoria.nombre)" />
+              <DataField label="Número de Folios" :value="solicitud.folios" />
+              <DataField label="Número de Anexos" :value="solicitud.anexos" />
+              <DataField label="Número de Expediente" :value="solicitud.expediente" />
               <div class="sm:col-span-2">
                 <p class="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1.5">Descripcion</p>
                 <p class="text-sm text-gray-900 leading-relaxed bg-gray-100 rounded-lg p-4">{{ solicitud.descripcion }}</p>
@@ -202,7 +205,7 @@
             <div class="flex flex-col gap-4">
               <div>
                 <p class="text-xs text-gray-500 mb-1">No. de Solicitud</p>
-                <p class="text-sm font-bold font-mono text-[#1A4972]">{{ solicitud.numerosolicitud.toString().padStart(4, '0') }}-{{ solicitud.vigencia }}</p>
+                <p class="text-sm font-bold font-mono text-[#1A4972]">{{ settings.prefijo_ventanilla }}-{{ solicitud.vigencia }}-{{ solicitud.numerosolicitud.toString().padStart(4, '0') }}</p>
               </div>
               <div>
                 <p class="text-xs text-gray-500 mb-1">Estado</p>
@@ -261,6 +264,7 @@
 </template>
 
 <script setup lang="ts">
+// 1. Imports
   import { ref, onMounted } from 'vue'
   import { ESTADOS_LABEL, ESTADOS_COLOR } from '@/shared/types'
   import { useSolicitudes } from '@/shared/composables/useSolicitudes'
@@ -268,7 +272,9 @@
   import { useRouter } from 'vue-router'
   import DataField from '@/shared/components/common/DataField.vue'
   import TimelineItem from '@/shared/components/common/TimelineItem.vue'
+  import { useAppSettings } from '@/shared/composables/useAppSettings'
 
+// 2. Composables
   const router = useRouter()
   const route = useRoute()
   const {
@@ -276,29 +282,13 @@
     loading,
     apiError
   } = useSolicitudes()
+  const { settings } = useAppSettings()
 
+// 3. Estado Reactivo
   const solicitud = ref(null)
   const error = ref(false)
 
-  onMounted(async() => {
-    const hasPublicToken = sessionStorage.getItem('solicitud_token')
-
-    const result = await getSolicitud(route.params.solicitud_id, !!hasPublicToken)
-    
-    if (!result) {
-      if (apiError.value && apiError.value.includes('expirado')) {
-        sessionStorage.removeItem('solicitud_token')
-        sessionStorage.removeItem('solicitud_expires_at')
-        router.push({ name: 'consultar', query: { expired: 'true' } })
-      } else {
-        error.value = true
-      }
-      return
-    }
-
-    solicitud.value = result
-  })
-
+// 4. Funciones
   function getEstadoLabel(estado: string): string {
     return ESTADOS_LABEL[estado] || estado
   }
@@ -347,4 +337,25 @@
     const date = new Date(dateTimeStr)
     return date.toISOString().split('T')[0]
   }
+
+  // 5. Lifecycle Hooks
+  onMounted(async() => {
+    const hasPublicToken = sessionStorage.getItem('solicitud_token')
+
+    const result = await getSolicitud(route.params.solicitud_id, !!hasPublicToken)
+    
+    if (!result) {
+      if (apiError.value && apiError.value.includes('expirado')) {
+        sessionStorage.removeItem('solicitud_token')
+        sessionStorage.removeItem('solicitud_expires_at')
+        router.push({ name: 'consultar', query: { expired: 'true' } })
+      } else {
+        error.value = true
+      }
+      return
+    }
+
+    solicitud.value = result
+  })
+
 </script>
