@@ -65,7 +65,7 @@ const router = createRouter({
             {
               path: '',
               name: 'turnos',
-              component: () => import('@/private_app/turnos/views/TurnosList.vue'),
+              component: () => import('@/private_app/turnos/wrapper/TurnosView.vue'),
             },
             {
               path: 'nuevo',
