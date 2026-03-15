@@ -141,6 +141,45 @@ export const useSolicitudes = () => {
     }
   }
 
+  const getSolicitudes = async (page = 1, pageSize = 10) => {
+    apiError.value = null;
+    loading.value = true;
+
+    try {
+      const url = new URL(`${BASE_API_URL}/solicitudes`);
+      url.searchParams.append('page', page);
+      url.searchParams.append('pageSize', pageSize);
+
+      const response = await fetch(url, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token.value}`,
+        },
+      });
+
+      const data = await response.json();
+
+      if (data.status === 'error') {
+        apiError.value = data.message;
+        return null;
+      }
+
+      const { solicitudes, pagination } = data;
+
+      solicitudes.value = {
+        solicitudes,
+        pagination,
+      };
+
+      return solicitudes.value;
+    } catch (error) {
+      apiError.value = error.message;
+      return null;
+    } finally {
+      loading.value = false;
+    }
+  };
+
   return {
     solicitud,
     loading,
@@ -149,5 +188,6 @@ export const useSolicitudes = () => {
     solicitarOTP,
     verificarOTP,
     getSolicitud,
+    getSolicitudes,
   }
 }
