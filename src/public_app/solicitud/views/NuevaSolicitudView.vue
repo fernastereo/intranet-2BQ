@@ -94,23 +94,30 @@
               <p v-if="errors.telefono" class="mt-1 text-xs text-red-500">{{ errors.telefono }}</p>
             </div>
 
-            <div>
-              <label for="tipoSolicitante" class="block text-sm font-medium text-gray-700 mb-1.5">Tipo de Solicitante <span class="text-red-500">*</span></label>
-              <select id="tipoSolicitante" v-model="form.tipoSolicitante" class="w-full px-3.5 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A4972] focus:border-transparent transition-all" required>
-                <option value="" disabled>Seleccione una opción</option>
-                <option value="titular">Titular</option>
-                <option value="representante">Representante Legal</option>
-                <option value="apoderado">Apoderado</option>
-              </select>
-              <p v-if="errors.tipoSolicitante" class="mt-1 text-xs text-red-500">{{ errors.tipoSolicitante }}</p>
-            </div>
-
-            <div v-if="form.tipoSolicitante === 'representante' || form.tipoSolicitante === 'apoderado'">
-              <label for="nombreRepresentante" class="block text-sm font-medium text-gray-700 mb-1.5">
-                Nombre del {{ form.tipoSolicitante === 'representante' ? 'Representante' : 'Apoderado' }} <span class="text-red-500">*</span>
-              </label>
-              <input id="nombreRepresentante" v-model="form.nombreRepresentante" type="text" class="w-full px-3.5 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A4972] focus:border-transparent transition-all" :placeholder="'Nombre completo del ' + (form.tipoSolicitante === 'representante' ? 'representante' : 'apoderado')" required />
-              <p v-if="errors.nombreRepresentante" class="mt-1 text-xs text-red-500">{{ errors.nombreRepresentante }}</p>
+            <div class="grid col-span-2 md:grid-cols-3 gap-5">
+              <div>
+                <label for="tipoResponsable" class="block text-sm font-medium text-gray-700 mb-1.5">Tipo de Solicitante <span class="text-red-500">*</span></label>
+                <select id="tipoResponsable" v-model="form.tipoResponsable" class="w-full px-3.5 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A4972] focus:border-transparent transition-all" required>
+                  <option value="" disabled>Seleccione una opción</option>
+                  <option v-for="tipo in tiposResponsable" :key="tipo.id" :value="tipo.id">{{ tipo.nombre }}</option>
+                </select>
+                <p v-if="errors.tipoResponsable" class="mt-1 text-xs text-red-500">{{ errors.tipoResponsable }}</p>
+              </div>
+              
+              <div v-if="form.tipoResponsable === 2 || form.tipoResponsable === 5">
+                  <label for="identificacionRepresentante" class="block text-sm font-medium text-gray-700 mb-1.5">
+                    Identificación del {{ form.tipoResponsable === 5 ? 'Representante' : 'Apoderado' }} <span class="text-red-500">*</span>
+                  </label>
+                  <input id="identificacionRepresentante" v-model="form.identificacionRepresentante" type="text" class="w-full px-3.5 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A4972] focus:border-transparent transition-all" required />
+                  <p v-if="errors.identificacionRepresentante" class="mt-1 text-xs text-red-500">{{ errors.identificacionRepresentante }}</p>
+              </div>
+              <div v-if="form.tipoResponsable === 2 || form.tipoResponsable === 5">
+                  <label for="nombreRepresentante" class="block text-sm font-medium text-gray-700 mb-1.5">
+                    Nombre del {{ form.tipoResponsable === 5 ? 'Representante' : 'Apoderado' }} <span class="text-red-500">*</span>
+                  </label>
+                  <input id="nombreRepresentante" v-model="form.nombreRepresentante" type="text" class="w-full px-3.5 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A4972] focus:border-transparent transition-all" required />
+                  <p v-if="errors.nombreRepresentante" class="mt-1 text-xs text-red-500">{{ errors.nombreRepresentante }}</p>
+              </div>
             </div>
           </div>
         </section>
@@ -226,10 +233,12 @@ import Sticker from '@/shared/components/solicitud/Sticker.vue'
 import { useCategoriaDocumentos } from '@/shared/composables/useCategoriaDocumentos'
 import { useSolicitudes } from '@/shared/composables/useSolicitudes'
 import { useAppSettings } from '@/shared/composables/useAppSettings'
+import { useTiposResponsable } from '@/shared/composables/useTiposResponsable'
 import Swal from 'sweetalert2'
 
 // 2. Composables
 const { settings } = useAppSettings()
+const { tiposResponsable, getTiposResponsable } = useTiposResponsable()
 const { 
   categoriasDocumentos, 
   getCategoriaDocumentos, 
@@ -248,7 +257,8 @@ const form = ref({
   email: '',
   telefono: '',
   direccion: '',
-  tipoSolicitante: '',
+  tipoResponsable: '',
+  identificacionRepresentante: '',
   nombreRepresentante: '',
   categoria: '',
   subcategoria: '',
@@ -306,8 +316,9 @@ const buildFormData = (formData) => {
   fd.append('solicitante_nombre', formData.nombre)
   fd.append('solicitante_email', formData.email)
   fd.append('solicitante_identificacion', formData.identificacion)
+  fd.append('representante_identificacion', formData.identificacionRepresentante)
   fd.append('representante_nombre', formData.nombreRepresentante)
-  fd.append('representante_tipo', formData.tipoSolicitante)
+  fd.append('representante_tipo', formData.tipoResponsable)
   fd.append('telefono', formData.telefono)
   fd.append('direccion', formData.direccion)
   fd.append('categoria_id', formData.categoria)
@@ -333,9 +344,10 @@ const validate = () => {
   else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.value.email)) errors.value.email = 'Ingrese un correo electronico valido'
   if (!form.value.telefono.trim()) errors.value.telefono = 'El telefono es requerido'
   if (!form.value.direccion.trim()) errors.value.direccion = 'La direccion es requerida'
-  if (!form.value.tipoSolicitante) errors.value.tipoSolicitante = 'Seleccione un tipo de solicitante'
-  if ((form.value.tipoSolicitante === 'representante' || form.value.tipoSolicitante === 'apoderado') && !form.value.nombreRepresentante.trim()) {
-    errors.value.nombreRepresentante = 'El nombre del representante/apoderado es requerido'
+  if (!form.value.tipoResponsable) errors.value.tipoResponsable = 'Seleccione un tipo de solicitante'
+  if (form.value.tipoResponsable === 5 || form.value.tipoResponsable === 2) {
+    if (!form.value.identificacionRepresentante.trim()) errors.value.identificacionRepresentante = 'La identificación del representante/apoderado es requerida'
+    if (!form.value.nombreRepresentante.trim()) errors.value.nombreRepresentante = 'El nombre del representante/apoderado es requerido'
   }
 
   if (!form.value.categoria) errors.value.categoria = 'Seleccione una categoria'
@@ -409,7 +421,8 @@ const resetForm = () => {
     email: '',
     telefono: '',
     direccion: '',
-    tipoSolicitante: '',
+    tipoResponsable: '',
+    identificacionRepresentante: '',
     nombreRepresentante: '',
     categoria: '',
     subcategoria: '',
@@ -426,5 +439,6 @@ const resetForm = () => {
 // 5. Lifecycle Hooks
 onMounted(async () => {
   await getCategoriaDocumentos('web')
+  await getTiposResponsable('web')
 })
 </script>
