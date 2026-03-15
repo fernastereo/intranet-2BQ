@@ -87,26 +87,31 @@
 </template>
 
 <script setup>
-  import { ref, computed } from 'vue'
+  import { ref } from 'vue'
   import { Dialog, DialogPanel, TransitionChild, TransitionRoot } from '@headlessui/vue'
   import { Bars3Icon, XMarkIcon } from '@heroicons/vue/24/outline'
   import { RouterLink, RouterView, useRouter } from 'vue-router'
   import { useAuth } from '@/shared/composables/useAuth'
+  import { useSessionTimeout } from '@/shared/composables/useSessionTimeout'
   import ActiveUser from '@/private_app/layout/components/ActiveUser.vue'
   import MenuItems from '@/private_app/layout/components/MenuItems.vue'
 
-  const { isAuthenticated, logout } = useAuth()
+  const { logout } = useAuth()
   const router = useRouter()
 
   const sidebarOpen = ref(false)
 
   const handleLogout = async () => {
-    console.log('logout')
     const success = await logout()
-    console.log(success)
     if (success) {
       router.push({ name: 'login' })
-      return
     }
   }
+
+  useSessionTimeout({
+    onTimeout: async () => {
+      await logout()
+      router.push({ name: 'login' })
+    }
+  })
 </script>
