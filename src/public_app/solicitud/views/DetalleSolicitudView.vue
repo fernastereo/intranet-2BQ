@@ -261,7 +261,6 @@
 <script setup lang="ts">
 // 1. Imports
   import { ref, onMounted, computed } from 'vue'
-  import { ESTADOS_LABEL, ESTADOS_COLOR } from '@/shared/types'
   import { useSolicitudes } from '@/shared/composables/useSolicitudes'
   import { useRoute } from 'vue-router'
   import { useRouter } from 'vue-router'
@@ -284,23 +283,6 @@
   const error = ref(false)
 
 // 4. Funciones
-  function getEstadoLabel(estado: string): string {
-    return ESTADOS_LABEL[estado] || estado
-  }
-
-  function getEstadoColor(estado: string): string {
-    return ESTADOS_COLOR[estado] || 'bg-gray-100 text-gray-800'
-  }
-
-  function formatTipoSolicitante(tipo: string): string {
-    const labels: Record<string, string> = {
-      titular: 'Titular',
-      representante: 'Representante Legal',
-      apoderado: 'Apoderado'
-    }
-    return labels[tipo] || tipo
-  }
-
   function formatFileSize(bytes: number): string {
     if (bytes === 0) return '0 B'
     const k = 1024
