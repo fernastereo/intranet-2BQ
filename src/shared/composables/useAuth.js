@@ -1,17 +1,17 @@
 import { ref, computed, readonly } from 'vue'
-import { useRouter } from 'vue-router'
 
 const token = ref(localStorage.getItem('token') || null)
 const user = ref(JSON.parse(localStorage.getItem('user')) || null)
 const authError = ref('')
+let isTokenVerified = false
 
 export const useAuth = () => {
-  const router = useRouter()
 
   const isAuthenticated = computed(() => !!token.value)
 
   const setToken = (newToken) => {
     token.value = newToken
+    isTokenVerified = false
     localStorage.setItem('token', newToken)
   }
 
@@ -68,6 +68,7 @@ export const useAuth = () => {
 
       setToken(null);
       setUser(null);
+      isTokenVerified = false
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       return true;
@@ -112,6 +113,9 @@ export const useAuth = () => {
     const BASE_API_URL = import.meta.env.VITE_BASE_API_URL;
     if (!token.value) return false;
 
+    // Token ya validado en esta sesión — no repetir llamada a la API
+    if (isTokenVerified) return true;
+
     try {
       const response = await fetch(`${BASE_API_URL}/verify-token`, {
         method: 'GET',
@@ -123,7 +127,7 @@ export const useAuth = () => {
       const data = await response.json();
 
       if (data.status === 'error') {
-        // Solo limpiar el estado local, no hacer llamadas adicionales
+        isTokenVerified = false;
         setToken(null);
         setUser(null);
         localStorage.removeItem('token');
@@ -131,10 +135,12 @@ export const useAuth = () => {
         return false;
       }
 
+      isTokenVerified = true;
       return true;
     } catch (e) {
       // En caso de error de red, solo limpiar el estado local
       // NO llamar a logout() para evitar loops infinitos
+      isTokenVerified = false;
       setToken(null);
       setUser(null);
       localStorage.removeItem('token');

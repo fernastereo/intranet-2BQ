@@ -6,8 +6,8 @@
   const { fetchSettings } = useAppSettings()
 
   // Inicializar la configuración al arrancar la aplicación
-  onMounted(async () => {
-    await fetchSettings()
+  onMounted(() => {
+    fetchSettings()
   })
 </script>
 
