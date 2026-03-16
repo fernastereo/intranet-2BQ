@@ -5,7 +5,7 @@
         <!-- Logo ee-->
         <a href="https://curaduria2barranquilla.com" class="shrink-0 py-2 hidden lg:block">
           <img 
-            src="@/assets/logo2.png" 
+            src="@/assets/Logo2.png" 
             :alt="nombre || 'Logo'" 
             class="h-[155px] w-auto"
           >
