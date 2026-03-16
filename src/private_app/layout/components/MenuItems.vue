@@ -26,7 +26,7 @@
   const route = useRoute()
   
   const navigation = [
-    { name: 'Dashboard', href: 'dashboard', icon: HomeIcon },
+    { name: 'Dashboard', href: { name: 'home' }, icon: HomeIcon },
     { name: 'Turnos', href: { name: 'turnos' }, icon: FolderIcon },
     { name: 'Ventanilla', href: { name: 'ventanilla' }, icon: DocumentDuplicateIcon },
     { name: 'Reportes', href: { name: 'reportes' }, icon: ChartPieIcon },
