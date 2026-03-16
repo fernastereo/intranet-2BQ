@@ -9,12 +9,12 @@ export const useTiposResponsable = () => {
   const loading = ref(false);
   const apiError = ref('');
 
-  const getTiposResponsable = async () => {
+  const getTiposResponsable = async (origen = '') => {
     apiError.value = null;
     loading.value = true;
 
     try {
-      const response = await fetch(`${BASE_API_URL}/tipos-responsable`, {
+      const response = await fetch(`${BASE_API_URL}/tipos-responsable?origen=${origen}`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token.value}`,

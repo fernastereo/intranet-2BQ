@@ -13,14 +13,14 @@
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <h1 class="text-3xl md:text-4xl font-bold text-white tracking-tight">Detalle de Solicitud</h1>
-            <p v-if="solicitud" class="mt-1 text-blue-200 font-mono text-sm">{{ solicitud.numerosolicitud.toString().padStart(4, '0') }}-{{ solicitud.vigencia }}</p>
+            <p v-if="solicitud" class="mt-1 text-blue-200 font-mono text-sm">{{ settings.prefijo_ventanilla }}-{{ solicitud.vigencia }}-{{ solicitud.numerosolicitud.toString().padStart(4, '0') }}</p>
           </div>
           <span
             v-if="solicitud"
             class="inline-flex items-center self-start sm:self-auto px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider"
-            :class="getEstadoColor(solicitud.estado)"
+            :class="`bg-${solicitud.estado.class}-100 text-${solicitud.estado.class}-800`"
           >
-            {{ getEstadoLabel(solicitud.estado) }}
+            {{ solicitud.estado.nombre }}
           </span>
         </div>
       </div>
@@ -65,12 +65,13 @@
               Datos del Solicitante
             </h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <DataField label="Nombre Completo" :value="solicitud.solicitante_nombre" />
-              <DataField label="Identificacion" :value="solicitud.solicitante_identificacion" />
-              <DataField label="Correo Electronico" :value="solicitud.solicitante_email" />
+              <DataField class="uppercase" label="Nombre Completo" :value="titular.nombre" />
+              <DataField label="Identificacion" :value="titular.documento" />
+              <DataField label="Correo Electronico" :value="solicitud.email" />
               <DataField label="Telefono" :value="solicitud.telefono" />
-              <DataField label="Tipo de Solicitante" :value="formatTipoSolicitante(solicitud.representante_tipo)" />
-              <DataField v-if="solicitud.representante_nombre" label="Representante / Apoderado" :value="solicitud.representante_nombre" class="sm:col-span-2" />
+              <DataField label="Tipo de Solicitante" :value="titular.tiporesponsable" />
+              <DataField v-if="representante" label="Representante / Apoderado" :value="representante.nombre" class="uppercase" />
+              <DataField v-if="apoderado" label="Representante / Apoderado" :value="apoderado.nombre" class="uppercase" />
               <DataField label="Direccion del Inmueble" :value="solicitud.direccion" class="sm:col-span-2" />
             </div>
           </section>
@@ -87,6 +88,9 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <DataField label="Categoria" :value="String(solicitud.categoria.nombre)" />
               <DataField label="Subcategoria" :value="String(solicitud.subcategoria.nombre)" />
+              <DataField label="Número de Folios" :value="solicitud.folios" />
+              <DataField label="Número de Anexos" :value="solicitud.anexos" />
+              <DataField label="Número de Expediente" :value="solicitud.expediente" />
               <div class="sm:col-span-2">
                 <p class="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1.5">Descripcion</p>
                 <p class="text-sm text-gray-900 leading-relaxed bg-gray-100 rounded-lg p-4">{{ solicitud.descripcion }}</p>
@@ -145,10 +149,10 @@
               >
                 <div class="absolute left-0 top-0 w-3 h-3 rounded-full bg-[#1A4972] -translate-x-[7px]"></div>
                 <div class="flex items-center gap-2 mb-1">
-                  <span class="text-sm font-semibold text-gray-900">{{ comentario.autor }}</span>
-                  <span class="text-xs text-gray-500">{{ formatDate(comentario.fecha) }}</span>
+                  <span class="text-sm font-semibold text-gray-900">{{ comentario.nombre }}</span>
+                  <span class="text-xs text-gray-500">{{ formatDate(comentario.created_at) }}</span>
                 </div>
-                <p class="text-sm text-gray-600 leading-relaxed">{{ comentario.texto }}</p>
+                <p class="text-sm text-gray-600 leading-relaxed">{{ comentario.contenido }}</p>
               </div>
             </div>
             <div v-else class="text-center py-8">
@@ -157,38 +161,42 @@
           </section>
 
           <!-- Respuesta Final -->
-          <section v-if="solicitud.respuestaFinal" class="bg-white rounded-lg shadow-sm p-6 border-2"
-            :class="solicitud.respuestaFinal.estado === 'aprobada' ? 'border-green-300 bg-green-50/50'
-              : solicitud.respuestaFinal.estado === 'rechazada' ? 'border-red-300 bg-red-50/50'
-              : 'border-orange-300 bg-orange-50/50'">
-            <h2 class="text-lg font-bold mb-5 flex items-center gap-2"
-              :class="solicitud.respuestaFinal.estado === 'aprobada' ? 'text-green-800'
-                : solicitud.respuestaFinal.estado === 'rechazada' ? 'text-red-800'
-                : 'text-orange-800'">
+          <section v-if="solicitud.respuesta" class="rounded-lg shadow-sm p-6 border-2 border-[#1A4972]/20 bg-[#1A4972]/5">
+            <h2 class="text-lg font-bold text-[#1A4972] mb-5 flex items-center gap-2">
               <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
                 <polyline points="22 4 12 14.01 9 11.01" />
               </svg>
               Respuesta Final
             </h2>
-            <div class="flex flex-col gap-3">
-              <p class="text-sm leading-relaxed"
-                :class="solicitud.respuestaFinal.estado === 'aprobada' ? 'text-green-800'
-                  : solicitud.respuestaFinal.estado === 'rechazada' ? 'text-red-800'
-                  : 'text-orange-800'">
-                {{ solicitud.respuestaFinal.mensaje }}
+            <div class="flex flex-col gap-4">
+              <p class="text-sm leading-relaxed text-gray-900">
+                {{ solicitud.respuesta.contenido }}
               </p>
-              <div class="flex flex-col sm:flex-row sm:items-center gap-2 pt-3 border-t"
-                :class="solicitud.respuestaFinal.estado === 'aprobada' ? 'border-green-200'
-                  : solicitud.respuestaFinal.estado === 'rechazada' ? 'border-red-200'
-                  : 'border-orange-200'">
-                <span class="text-xs font-semibold"
-                  :class="solicitud.respuestaFinal.estado === 'aprobada' ? 'text-green-700'
-                    : solicitud.respuestaFinal.estado === 'rechazada' ? 'text-red-700'
-                    : 'text-orange-700'">
-                  {{ solicitud.respuestaFinal.funcionario }}
-                </span>
-                <span class="text-xs text-gray-500">{{ formatDate(solicitud.respuestaFinal.fecha) }}</span>
+              <div class="flex items-center gap-2 pt-3 border-t border-gray-200">
+                <span class="text-xs text-gray-500">{{ formatDateTime(solicitud.respuesta.created_at) }}</span>
+              </div>
+              <div v-if="solicitud.respuesta.adjuntos && solicitud.respuesta.adjuntos.length > 0" class="flex flex-col gap-2 pt-3 border-t border-gray-200">
+                <p class="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Archivos adjuntos a la respuesta</p>
+                <div
+                  v-for="(archivo, idx) in solicitud.respuesta.adjuntos"
+                  :key="archivo.id || idx"
+                  class="flex items-center justify-between rounded-lg bg-gray-100 px-4 py-3"
+                >
+                  <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-lg flex items-center justify-center"
+                      :class="archivo.mime_type === 'application/pdf' ? 'bg-red-100 text-red-600' : 'bg-blue-100 text-blue-600'">
+                      <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                        <polyline points="14 2 14 8 20 8" />
+                      </svg>
+                    </div>
+                    <div>
+                      <a :href="archivo.url" target="_blank" rel="noopener noreferrer" class="text-sm font-medium text-gray-900 hover:text-[#1A4972]">{{ archivo.file_name }}</a>
+                      <p class="text-xs text-gray-500">{{ formatFileSize(archivo.size_bytes) }}</p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </section>
@@ -202,16 +210,16 @@
             <div class="flex flex-col gap-4">
               <div>
                 <p class="text-xs text-gray-500 mb-1">No. de Solicitud</p>
-                <p class="text-sm font-bold font-mono text-[#1A4972]">{{ solicitud.numerosolicitud.toString().padStart(4, '0') }}-{{ solicitud.vigencia }}</p>
+                <p class="text-sm font-bold font-mono text-[#1A4972]">{{ settings.prefijo_ventanilla }}-{{ solicitud.vigencia }}-{{ solicitud.numerosolicitud.toString().padStart(4, '0') }}</p>
               </div>
               <div>
                 <p class="text-xs text-gray-500 mb-1">Estado</p>
-                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold" :class="getEstadoColor(solicitud.estado)">
-                  {{ getEstadoLabel(solicitud.estado) }}
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold" :class="`bg-${solicitud.estado.class}-100 text-${solicitud.estado.class}-800`">
+                  {{ solicitud.estado.nombre }}
                 </span>
               </div>
               <div>
-                <p class="text-xs text-gray-500 mb-1">Fecha de Creacion</p>
+                <p class="text-xs text-gray-500 mb-1">Fecha de Creación</p>
                 <p class="text-sm text-gray-900">{{ formatDateTime(solicitud.created_at) }}</p>
               </div>
               <div>
@@ -219,8 +227,14 @@
                 <p class="text-sm text-gray-900">{{ solicitud.vigencia }}</p>
               </div>
               <div>
-                <p class="text-xs text-gray-500 mb-1">Origen</p>
-                <p class="text-sm text-gray-900 capitalize">{{ solicitud.origen }}</p>
+                <div v-if="solicitud.origen === 'web'">
+                  <p class="text-xs text-gray-500 mb-1">Origen</p>
+                  <p class="text-sm text-gray-900 capitalize">{{ solicitud.origen }}</p>
+                </div>
+                <div v-else>
+                  <p class="text-xs text-gray-500 mb-1">Recibido por</p>
+                  <p class="text-sm text-gray-900 capitalize">{{ solicitud.usuario_receptor.nombre }}</p>
+                </div>
               </div>
             </div>
           </div>
@@ -229,21 +243,11 @@
           <div class="bg-white rounded-lg shadow-sm p-6">
             <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4">Linea de Tiempo</h3>
             <div class="flex flex-col gap-0">
-              <TimelineItem
-                label="Solicitud Recibida"
-                :date="formatDateOnly(solicitud.created_at)"
-                :active="true"
-              />
-              <TimelineItem
-                label="En Revision"
-                :date="solicitud.estado !== 'recibido' ? formatDateOnly(solicitud.updated_at) : undefined"
-                :active="solicitud.estado !== 'recibido'"
-              />
-              <TimelineItem
-                label="Resolucion"
-                :date="solicitud.respuestaFinal?.fecha"
-                :active="!!solicitud.respuestaFinal"
-                :isLast="true"
+              <TimelineItem v-for="historial in solicitud.historial_estados" :key="historial.id"
+                :label="historial.estado_nombre"
+                :date="formatDateOnly(historial.fecha)"
+                :active="historial.estado_id === solicitud.estado.id"
+                :isLast="historial.id === solicitud.historial_estados[solicitud.historial_estados.length - 1].id"
               />
             </div>
           </div>
@@ -261,14 +265,16 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, onMounted } from 'vue'
-  import { ESTADOS_LABEL, ESTADOS_COLOR } from '@/shared/types'
+// 1. Imports
+  import { ref, onMounted, computed } from 'vue'
   import { useSolicitudes } from '@/shared/composables/useSolicitudes'
   import { useRoute } from 'vue-router'
   import { useRouter } from 'vue-router'
-  import DataField from '@/public_app/shared/components/DataField.vue'
-  import TimelineItem from '@/public_app/shared/components/TimelineItem.vue'
+  import DataField from '@/shared/components/common/DataField.vue'
+  import TimelineItem from '@/shared/components/common/TimelineItem.vue'
+  import { useAppSettings } from '@/shared/composables/useAppSettings'
 
+// 2. Composables
   const router = useRouter()
   const route = useRoute()
   const {
@@ -276,46 +282,13 @@
     loading,
     apiError
   } = useSolicitudes()
+  const { settings } = useAppSettings()
 
+// 3. Estado Reactivo
   const solicitud = ref(null)
   const error = ref(false)
 
-  onMounted(async() => {
-    const hasPublicToken = sessionStorage.getItem('solicitud_token')
-
-    const result = await getSolicitud(route.params.solicitud_id, !!hasPublicToken)
-    
-    if (!result) {
-      if (apiError.value && apiError.value.includes('expirado')) {
-        sessionStorage.removeItem('solicitud_token')
-        sessionStorage.removeItem('solicitud_expires_at')
-        router.push({ name: 'consultar', query: { expired: 'true' } })
-      } else {
-        error.value = true
-      }
-      return
-    }
-
-    solicitud.value = result
-  })
-
-  function getEstadoLabel(estado: string): string {
-    return ESTADOS_LABEL[estado] || estado
-  }
-
-  function getEstadoColor(estado: string): string {
-    return ESTADOS_COLOR[estado] || 'bg-gray-100 text-gray-800'
-  }
-
-  function formatTipoSolicitante(tipo: string): string {
-    const labels: Record<string, string> = {
-      titular: 'Titular',
-      representante: 'Representante Legal',
-      apoderado: 'Apoderado'
-    }
-    return labels[tipo] || tipo
-  }
-
+// 4. Funciones
   function formatFileSize(bytes: number): string {
     if (bytes === 0) return '0 B'
     const k = 1024
@@ -347,4 +320,37 @@
     const date = new Date(dateTimeStr)
     return date.toISOString().split('T')[0]
   }
+
+  // 5. Lifecycle Hooks
+  onMounted(async() => {
+    const hasPublicToken = sessionStorage.getItem('solicitud_token')
+
+    const result = await getSolicitud(route.params.solicitud_id, !!hasPublicToken)
+    
+    if (!result) {
+      if (apiError.value && apiError.value.includes('expirado')) {
+        sessionStorage.removeItem('solicitud_token')
+        sessionStorage.removeItem('solicitud_expires_at')
+        router.push({ name: 'consultar', query: { expired: 'true' } })
+      } else {
+        error.value = true
+      }
+      return
+    }
+    solicitud.value = result
+  })
+
+  const titular = computed(() => {
+    if (!solicitud.value?.responsables) return null
+    return solicitud.value.responsables.find(r => r.tiporesponsable_id === 1)
+  })
+  const representante = computed(() => {
+    if (!solicitud.value?.responsables) return null
+    return solicitud.value.responsables.find(r => r.tiporesponsable_id === 5)
+  })
+  const apoderado = computed(() => {
+    if (!solicitud.value?.responsables) return null
+    return solicitud.value.responsables.find(r => r.tiporesponsable_id === 2)
+  })
+
 </script>

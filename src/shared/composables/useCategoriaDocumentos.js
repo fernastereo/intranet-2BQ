@@ -7,12 +7,12 @@ export const useCategoriaDocumentos = () => {
   const loading = ref(false);
   const apiError = ref('');
 
-  const getCategoriaDocumentos = async () => {
+  const getCategoriaDocumentos = async (origen = '') => {
     apiError.value = null;
     loading.value = true;
 
     try {
-      const response = await fetch(`${BASE_API_URL}/categorias-documentos`, {
+      const response = await fetch(`${BASE_API_URL}/categorias-documentos?origen=${origen}`, {
         headers: {
           'Content-Type': 'application/json',
         }

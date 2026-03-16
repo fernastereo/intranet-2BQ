@@ -2,11 +2,11 @@
   <nav class="bg-white shadow-md border-b-[7px] border-[#FFA800] h-[60px] md:h-[122px] z-50">
     <div class="container-fluid md:px-3">
       <div class="px-3 flex items-center justify-between h-[60px] md:h-[117px]">
-        <!-- Logo -->
+        <!-- Logo ee-->
         <a href="https://curaduria2barranquilla.com" class="shrink-0 py-2 hidden lg:block">
           <img 
-            src="http://www.curaduria2barranquilla.com/nuevapagina/img/Logo2.png" 
-            alt="logo" 
+            src="@/assets/Logo2.png" 
+            :alt="nombre || 'Logo'" 
             class="h-[155px] w-auto"
           >
         </a>
@@ -115,9 +115,14 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
+import { useAppSettings } from '@/shared/composables/useAppSettings'
 
 const isMenuOpen = ref(false)
+
+// Obtener configuración global
+const { settings } = useAppSettings()
+const nombre = computed(() => settings.value?.nombre || 'Logo')
 </script>
 
 <style scoped>

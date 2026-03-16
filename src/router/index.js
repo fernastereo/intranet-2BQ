@@ -1,8 +1,9 @@
-import HomeView from '@/views/HomeView.vue';
-import LoginView from '@/views/LoginView.vue';
+import PrivateLayout from '@/private_app/layout/wrapper/PrivateLayout.vue';
+import LoginView from '@/private_app/auth/LoginView.vue';
 import { createRouter, createWebHashHistory } from 'vue-router';
 import { useAuth } from '@/shared/composables/useAuth';
 import VentanillaPublicView from '@/public_app/ventanilla/views/VentanillaPublicView.vue';
+
 
 const router = createRouter({
   history: createWebHashHistory(),
@@ -16,12 +17,12 @@ const router = createRouter({
         {
           path: '',
           name: 'ventanilla-public-home',
-          component: () => import('@/public_app/ventanilla/components/HomeView.vue'),
+          component: () => import('@/public_app/ventanilla/components/VentanillaBody.vue'),
         },
         {
           path: '/nueva-solicitud',
           name: 'nueva-solicitud',
-          component: () => import('@/views/MantenimientoView.vue')
+          component: () => import('@/public_app/solicitud/views/NuevaSolicitudView.vue')
         },
         {
           path: '/consultar',
@@ -44,13 +45,13 @@ const router = createRouter({
     },
     {
       path: '/home',
-      component: HomeView,
+      component: PrivateLayout,
       meta: { requiresAuth: true },
       children: [
         {
           path: '', // Esta será la ruta por defecto -> '/dashboard'
           name: 'home',
-          component: () => import('@/views/DashboardView.vue'),
+          component: () => import('@/private_app/dashboard/wrapper/DashboardView.vue'),
         },
         {
           path: 'dashboard',
@@ -59,34 +60,50 @@ const router = createRouter({
         },
         {
           path: 'turnos',
-          component: () => import('@/views/TurnosView.vue'),
+          component: () => import('@/private_app/turnos/wrapper/TurnosView.vue'),
           children: [
             {
               path: '',
               name: 'turnos',
-              component: () => import('@/components/turnos/TurnosList.vue'),
+              component: () => import('@/private_app/turnos/wrapper/TurnosView.vue'),
             },
             {
               path: 'nuevo',
               name: 'nuevo-turno',
-              component: () => import('@/components/turnos/TurnosForm.vue'),
+              component: () => import('@/private_app/turnos/views/TurnosForm.vue'),
             },
             {
               path: 'editar/:id',
               name: 'editar-turno',
-              component: () => import('@/components/turnos/TurnosForm.vue'),
+              component: () => import('@/private_app/turnos/views/TurnosForm.vue'),
             },
           ],
         },
-        // {
-        //   path: 'ventanilla',
-        //   name: 'ventanilla',
-        //   component: () => import('@/views/VentanillaView.vue'),
-        // },
+        {
+          path: 'ventanilla',
+          component: () => import('@/private_app/ventanilla/wrapper/VentanillaView.vue'),
+          children: [
+            {
+              path: '',
+              name: 'ventanilla',
+              component: () => import('@/private_app/ventanilla/views/VentanillaList.vue'),
+            },
+            {
+              path: 'nuevo',
+              name: 'nuevo-ventanilla',
+              component: () => import('@/private_app/ventanilla/views/VentanillaForm.vue'),
+            },
+            {
+              path: 'editar/:id',
+              name: 'editar-ventanilla',
+              component: () => import('@/private_app/ventanilla/views/VentanillaForm.vue'),
+            },
+          ],
+        },
         {
           path: 'reportes',
           name: 'reportes',
-          component: () => import('@/views/ReportesView.vue'),
+          component: () => import('@/private_app/reportes/wrapper/ReportesView.vue'),
         },
       ],
     },

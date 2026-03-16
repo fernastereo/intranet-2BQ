@@ -1,22 +1,29 @@
 import { ref } from 'vue'
+import { useAuth } from './useAuth';
 
 export const useSolicitudes = () => {
   const BASE_API_URL = import.meta.env.VITE_BASE_API_URL
 
+  const { token } = useAuth();
   const solicitud = ref(null)
+  const solicitudes = ref({ solicitudes: [], pagination: {} })
+
   const loading = ref(false)
   const apiError = ref('')
 
-  const crearSolicitud = async (formData) => {
+  const crearSolicitud = async (formData, origen = '') => {
     apiError.value = null
     loading.value = true
 
     try {
-      const response = await fetch(`${BASE_API_URL}/solicitudes`, {
+      const url = origen ? `/${origen}` : ''
+      const headers = origen === 'oficina' ? { Authorization: `Bearer ${token.value}` } : {}
+
+      const response = await fetch(`${BASE_API_URL}/solicitudes${url}`, {
         method: 'POST',
+        headers,
         body: formData
       })
-
       const data = await response.json()
 
       if (data.status === 'error') {
@@ -123,6 +130,7 @@ export const useSolicitudes = () => {
 
       if (data.status === 'error') {
         apiError.value = data.message
+        solicitud.value = null
         // Si el token expiró, limpiar
         if (usePublicToken && data.message.includes('expirado')) {
           sessionStorage.removeItem('solicitud_token')
@@ -135,19 +143,68 @@ export const useSolicitudes = () => {
       return solicitud.value
     } catch (error) {
       apiError.value = error.message
+      solicitud.value = null
       return null
     } finally {
       loading.value = false
     }
   }
 
+  const getSolicitudes = async (page = 1, pageSize = 10) => {
+    apiError.value = null;
+    loading.value = true;
+
+    try {
+      const url = new URL(`${BASE_API_URL}/solicitudes`);
+      url.searchParams.append('page', page);
+      url.searchParams.append('pageSize', pageSize);
+
+      const response = await fetch(url, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token.value}`,
+        },
+      });
+
+      const data = await response.json();
+
+      if (data.status === 'error') {
+        apiError.value = data.message
+        return null
+      }
+
+      const items = data.data ?? []
+      const raw = data.pagination ?? {}
+
+      solicitudes.value = {
+        solicitudes: Array.isArray(items) ? items : [],
+        pagination: {
+          current_page: raw.page ?? 1,
+          total_pages: raw.totalPages ?? 1,
+          total_items: raw.total ?? 0,
+          item_init: ((raw.page ?? 1) - 1) * (raw.pageSize ?? 10) + 1,
+          item_end: Math.min((raw.page ?? 1) * (raw.pageSize ?? 10), raw.total ?? 0),
+        },
+      }
+
+      return solicitudes.value
+    } catch (error) {
+      apiError.value = error.message;
+      return null;
+    } finally {
+      loading.value = false;
+    }
+  };
+
   return {
     solicitud,
+    solicitudes,
     loading,
     apiError,
     crearSolicitud,
     solicitarOTP,
     verificarOTP,
     getSolicitud,
+    getSolicitudes,
   }
 }

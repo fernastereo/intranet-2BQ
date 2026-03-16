@@ -141,10 +141,8 @@ import { useSolicitudes } from '@/shared/composables/useSolicitudes'
 const router = useRouter()
 
 const {
-  solicitud,
   solicitarOTP,
   verificarOTP,
-  getSolicitud,
   loading,
   apiError
 } = useSolicitudes()
