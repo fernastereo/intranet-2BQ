@@ -227,8 +227,14 @@
                 <p class="text-sm text-gray-900">{{ solicitud.vigencia }}</p>
               </div>
               <div>
-                <p class="text-xs text-gray-500 mb-1">Origen</p>
-                <p class="text-sm text-gray-900 capitalize">{{ solicitud.origen }}</p>
+                <div v-if="solicitud.origen === 'web'">
+                  <p class="text-xs text-gray-500 mb-1">Origen</p>
+                  <p class="text-sm text-gray-900 capitalize">{{ solicitud.origen }}</p>
+                </div>
+                <div v-else>
+                  <p class="text-xs text-gray-500 mb-1">Recibido por</p>
+                  <p class="text-sm text-gray-900 capitalize">{{ solicitud.usuario_receptor.nombre }}</p>
+                </div>
               </div>
             </div>
           </div>
