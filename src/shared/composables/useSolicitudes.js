@@ -11,16 +11,19 @@ export const useSolicitudes = () => {
   const loading = ref(false)
   const apiError = ref('')
 
-  const crearSolicitud = async (formData) => {
+  const crearSolicitud = async (formData, origen = '') => {
     apiError.value = null
     loading.value = true
 
     try {
-      const response = await fetch(`${BASE_API_URL}/solicitudes`, {
+      const url = origen ? `/${origen}` : ''
+      const headers = origen === 'oficina' ? { Authorization: `Bearer ${token.value}` } : {}
+
+      const response = await fetch(`${BASE_API_URL}/solicitudes${url}`, {
         method: 'POST',
+        headers,
         body: formData
       })
-
       const data = await response.json()
 
       if (data.status === 'error') {
