@@ -1,6 +1,10 @@
 <template>
-  <div class="px-4 sm:px-6 lg:px-8">
-
+  <div class="bg-gray-900">
+    <div class="mx-auto px-4 py-3">
+      <h1 class="text-xl font-bold text-gray-900 tracking-tight">Ventanilla</h1>
+    </div>
+  </div>
+  <div class="mx-4 my-4 px-4 sm:px-6 lg:px-8">
     <!-- Header -->
     <div class="sm:flex sm:items-center">
       <div class="sm:flex-auto flex items-center gap-x-1.5">

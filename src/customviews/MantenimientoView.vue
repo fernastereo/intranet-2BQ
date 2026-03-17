@@ -84,7 +84,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 
-const fechaEstimada = ref('09 de marzo de 2026, 14:00 hrs')
+const fechaEstimada = ref('17 de marzo de 2026, 14:00 hrs')
 const progreso = ref(0)
 
 let interval: ReturnType<typeof setInterval> | null = null
