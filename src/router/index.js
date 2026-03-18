@@ -96,7 +96,8 @@ const router = createRouter({
             {
               path: 'editar/:id',
               name: 'editar-ventanilla',
-              component: () => import('@/private_app/ventanilla/views/VentanillaForm.vue'),
+              component: () => import('@/private_app/ventanilla/views/DetalleSolicitudView.vue'),
+              props: true,
             },
           ],
         },
