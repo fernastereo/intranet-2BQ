@@ -71,7 +71,7 @@
 </template>
 
 <script setup lang="ts">
-  import { ref } from 'vue'
+  import { ref, watch } from 'vue'
 
   const props = withDefaults(defineProps<{
     label?: string
@@ -89,7 +89,11 @@
 
   const fileInput = ref<HTMLInputElement | null>(null)
   const isDragging = ref(false)
-  const files = ref<File[]>([...props.modelValue])
+  const files = ref<File[]>([...(props.modelValue || [])])
+
+  watch(() => props.modelValue, (newVal) => {
+    files.value = [...(newVal || [])]
+  })
 
   function triggerFileInput() {
     fileInput.value?.click()

@@ -40,6 +40,38 @@ export const useSolicitudes = () => {
     }
   }
 
+  const actualizarSolicitud = async (id, payload) => {
+    apiError.value = null
+    loading.value = true
+
+    try {
+      const headers = {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token.value}`
+      }
+
+      const response = await fetch(`${BASE_API_URL}/solicitudes/${id}`, {
+        method: 'PUT',
+        headers,
+        body: JSON.stringify(payload)
+      })
+      const data = await response.json()
+
+      if (data.status === 'error') {
+        apiError.value = data.message
+        return null
+      }
+
+      solicitud.value = data.data || data
+      return solicitud.value
+    } catch (error) {
+      apiError.value = error.message
+      return null
+    } finally {
+      loading.value = false
+    }
+  }
+
   const solicitarOTP = async (emailData) => {
     apiError.value = null
     loading.value = true
@@ -150,6 +182,39 @@ export const useSolicitudes = () => {
     }
   }
 
+  const uploadAdjuntosLoading = ref(false)
+
+  const agregarAdjuntos = async (id, files) => {
+    if (!files?.length) return null
+
+    apiError.value = null
+    uploadAdjuntosLoading.value = true
+    const fd = new FormData()
+    files.forEach(file => fd.append('files[]', file))
+
+    try {
+      const response = await fetch(`${BASE_API_URL}/solicitudes/${id}/adjuntos`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token.value}` },
+        body: fd
+      })
+      const data = await response.json()
+
+      if (data.status === 'error') {
+        apiError.value = data.message
+        return null
+      }
+
+      apiError.value = null
+      return data.data || data
+    } catch (error) {
+      apiError.value = error.message
+      return null
+    } finally {
+      uploadAdjuntosLoading.value = false
+    }
+  }
+
   const getSolicitudes = async (page = 1, pageSize = 10) => {
     apiError.value = null;
     loading.value = true;
@@ -201,7 +266,10 @@ export const useSolicitudes = () => {
     solicitudes,
     loading,
     apiError,
+    uploadAdjuntosLoading,
     crearSolicitud,
+    actualizarSolicitud,
+    agregarAdjuntos,
     solicitarOTP,
     verificarOTP,
     getSolicitud,
