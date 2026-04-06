@@ -7,7 +7,7 @@ import vueDevTools from 'vite-plugin-vue-devtools'
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
-  // Cargar variables de entorno según el modo
+  // Cargar variables de entorno según el modo ...
   const env = loadEnv(mode, process.cwd(), '')
   const baseUrl = env.VITE_BASE_URL || '/ventanilla/'
   
