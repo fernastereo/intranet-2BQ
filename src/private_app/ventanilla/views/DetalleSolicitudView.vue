@@ -602,7 +602,11 @@ async function handleSubmit() {
     return
   }
 
-  solicitud.value = result
+  const refreshed = await getSolicitud(route.params.id, false)
+  if (refreshed) {
+    solicitud.value = refreshed
+    populateForm(refreshed)
+  }
   Swal.fire({
     icon: 'success',
     title: 'Solicitud actualizada',
