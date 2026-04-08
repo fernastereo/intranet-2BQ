@@ -51,7 +51,7 @@ export const useSolicitudes = () => {
       }
 
       const response = await fetch(`${BASE_API_URL}/solicitudes/${id}`, {
-        method: 'PUT',
+        method: 'POST',
         headers,
         body: JSON.stringify(payload)
       })

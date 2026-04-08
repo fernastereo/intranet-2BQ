@@ -141,18 +141,20 @@
                 </select>
                 <p v-if="errors.subcategoria" class="mt-1 text-xs text-red-500">{{ errors.subcategoria }}</p>
               </div>
-              <div>
-                <label for="folios" class="block text-sm font-medium text-gray-700 mb-1.5">Número de Folios</label>
-                <input id="folios" v-model="form.folios" type="number" class="w-full px-3.5 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A4972] focus:border-transparent" placeholder="0" min="0" />
-              </div>
-              <div>
-                <label for="anexos" class="block text-sm font-medium text-gray-700 mb-1.5">Número de Anexos</label>
-                <input id="anexos" v-model="form.anexos" type="number" class="w-full px-3.5 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A4972] focus:border-transparent" placeholder="0" min="0" />
-              </div>
-              <div v-if="subcategoriaSeleccionada?.incorporaexpediente" class="sm:col-span-2">
-                <label for="expediente" class="block text-sm font-medium text-gray-700 mb-1.5">Número de Expediente Asociado <span class="text-red-500">*</span></label>
-                <input id="expediente" v-model="form.expediente" type="text" class="w-full px-3.5 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A4972] focus:border-transparent" :required="subcategoriaSeleccionada?.incorporaexpediente" />
-                <p v-if="errors.expediente" class="mt-1 text-xs text-red-500">{{ errors.expediente }}</p>
+              <div class="grid grid-cols-1 sm:grid-cols-3 sm:col-span-2 gap-4">
+                <div>
+                  <label for="folios" class="block text-sm font-medium text-gray-700 mb-1.5">Número de Folios</label>
+                  <input id="folios" v-model="form.folios" type="number" class="w-full px-3.5 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A4972] focus:border-transparent" placeholder="0" min="0" />
+                </div>
+                <div>
+                  <label for="anexos" class="block text-sm font-medium text-gray-700 mb-1.5">Número de Anexos</label>
+                  <input id="anexos" v-model="form.anexos" type="number" class="w-full px-3.5 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A4972] focus:border-transparent" placeholder="0" min="0" />
+                </div>
+                <div v-if="subcategoriaSeleccionada?.incorporaexpediente" class="">
+                  <label for="expediente" class="block text-sm font-medium text-gray-700 mb-1.5">Expediente Asociado <span class="text-red-500">*</span></label>
+                  <input id="expediente" v-model="form.expediente" type="text" class="w-full px-3.5 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A4972] focus:border-transparent" :required="subcategoriaSeleccionada?.incorporaexpediente" />
+                  <p v-if="errors.expediente" class="mt-1 text-xs text-red-500">{{ errors.expediente }}</p>
+                </div>
               </div>
               <div class="sm:col-span-2">
                 <label for="descripcion" class="block text-sm font-medium text-gray-700 mb-1.5">Descripción de la Solicitud <span class="text-red-500">*</span></label>
