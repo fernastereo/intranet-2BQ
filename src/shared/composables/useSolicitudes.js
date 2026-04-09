@@ -215,7 +215,7 @@ export const useSolicitudes = () => {
     }
   }
 
-  const getSolicitudes = async (page = 1, pageSize = 10) => {
+  const getSolicitudes = async (page = 1, pageSize = 10, search = '') => {
     apiError.value = null;
     loading.value = true;
 
@@ -223,6 +223,7 @@ export const useSolicitudes = () => {
       const url = new URL(`${BASE_API_URL}/solicitudes`);
       url.searchParams.append('page', page);
       url.searchParams.append('pageSize', pageSize);
+      if (search) url.searchParams.append('search', search);
 
       const response = await fetch(url, {
         headers: {
