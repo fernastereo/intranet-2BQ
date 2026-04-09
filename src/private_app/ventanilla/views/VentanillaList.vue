@@ -66,9 +66,11 @@ const searchTerm = ref('')
 const currentPage = ref(1)
 const PAGE_SIZE = 10
 
+const apiSearchTerm = ref('')
+
 const filteredSolicitudes = computed(() => {
   const items = solicitudes.value.solicitudes ?? []
-  if (!searchTerm.value) return items
+  if (!searchTerm.value || apiSearchTerm.value === searchTerm.value) return items
 
   const term = searchTerm.value.toLowerCase()
   return items.filter(s =>
@@ -83,7 +85,7 @@ const filteredSolicitudes = computed(() => {
 const fetchData = async (page = 1) => {
   isLoading.value = true
   try {
-    await getSolicitudes(page, PAGE_SIZE)
+    await getSolicitudes(page, PAGE_SIZE, apiSearchTerm.value)
     currentPage.value = page
   } finally {
     isLoading.value = false
@@ -92,10 +94,15 @@ const fetchData = async (page = 1) => {
 
 const handleLocalSearch = (value) => {
   searchTerm.value = value
+  if (!value) {
+    apiSearchTerm.value = ''
+    fetchData(1)
+  }
 }
 
 const handleApiSearch = (value) => {
   searchTerm.value = value
+  apiSearchTerm.value = value
   fetchData(1)
 }
 
