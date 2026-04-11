@@ -46,12 +46,13 @@ const router = createRouter({
     {
       path: '/home',
       component: PrivateLayout,
-      meta: { requiresAuth: true },
+      meta: { requiresAuth: true, breadcrumb: 'Inicio', breadcrumbTo: { name: 'home' } },
       children: [
         {
           path: '', // Esta será la ruta por defecto -> '/dashboard'
           name: 'home',
           component: () => import('@/private_app/dashboard/wrapper/DashboardView.vue'),
+          meta: { breadcrumb: 'Dashboard' },
         },
         {
           path: 'dashboard',
@@ -61,6 +62,7 @@ const router = createRouter({
         {
           path: 'turnos',
           component: () => import('@/private_app/turnos/wrapper/TurnosView.vue'),
+          meta: { breadcrumb: 'Turnos', breadcrumbTo: { name: 'turnos' } },
           children: [
             {
               path: '',
@@ -71,17 +73,20 @@ const router = createRouter({
               path: 'nuevo',
               name: 'nuevo-turno',
               component: () => import('@/private_app/turnos/views/TurnosForm.vue'),
+              meta: { breadcrumb: 'Nuevo Turno' },
             },
             {
               path: 'editar/:id',
               name: 'editar-turno',
               component: () => import('@/private_app/turnos/views/TurnosForm.vue'),
+              meta: { breadcrumb: 'Editar Turno' },
             },
           ],
         },
         {
           path: 'ventanilla',
           component: () => import('@/private_app/ventanilla/wrapper/VentanillaView.vue'),
+          meta: { breadcrumb: 'Ventanilla', breadcrumbTo: { name: 'ventanilla' } },
           children: [
             {
               path: '',
@@ -92,12 +97,14 @@ const router = createRouter({
               path: 'nuevo',
               name: 'nuevo-ventanilla',
               component: () => import('@/private_app/ventanilla/views/VentanillaForm.vue'),
+              meta: { breadcrumb: 'Nueva Solicitud' },
             },
             {
               path: 'editar/:id',
               name: 'editar-ventanilla',
-              component: () => import('@/private_app/ventanilla/views/DetalleSolicitudView.vue'),
+              component: () => import('@/private_app/ventanilla/views/VentanillaEditForm.vue'),
               props: true,
+              meta: { breadcrumb: 'Editar Solicitud' },
             },
           ],
         },
@@ -105,6 +112,7 @@ const router = createRouter({
           path: 'reportes',
           name: 'reportes',
           component: () => import('@/private_app/reportes/wrapper/ReportesView.vue'),
+          meta: { breadcrumb: 'Reportes' },
         },
       ],
     },

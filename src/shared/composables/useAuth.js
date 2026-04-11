@@ -109,6 +109,35 @@ export const useAuth = () => {
     }
   };
 
+  const refreshToken = async () => {
+    const BASE_API_URL = import.meta.env.VITE_BASE_API_URL;
+    if (!token.value) return false;
+
+    try {
+      const response = await fetch(`${BASE_API_URL}/refresh-token`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token.value}`,
+        },
+      });
+
+      const data = await response.json();
+
+      if (data.status === 'error') {
+        setToken(null);
+        setUser(null);
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        return false;
+      }
+      
+      return true;
+    } catch (e) {
+      return false;
+    }
+  };
+
   const checkAuth = async () => {
     const BASE_API_URL = import.meta.env.VITE_BASE_API_URL;
     if (!token.value) return false;
@@ -158,6 +187,7 @@ export const useAuth = () => {
     login,
     logout,
     checkAuth,
+    refreshToken,
     setToken,
     setUser,
     getUser,

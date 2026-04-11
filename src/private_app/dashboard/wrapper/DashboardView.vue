@@ -1,20 +1,5 @@
 <template>
-  <!-- Page Header -->
-  <div class="bg-gray-900">
-    <div class="mx-auto px-4 py-3 sm:px-6 lg:px-8 flex items-center justify-between">
-      <div>
-        <h1 class="text-xl font-bold text-white tracking-tight">Dashboard</h1>
-      </div>
-      <button
-        type="button"
-        @click="fetchData"
-        class="rounded-lg p-2 text-gray-400 hover:text-white hover:bg-gray-800 transition-colors"
-        title="Actualizar datos"
-      >
-        <ArrowPathIcon class="h-5 w-5" :class="{ 'animate-spin': isLoading }" />
-      </button>
-    </div>
-  </div>
+  <PageHeader title="Dashboard" :isLoading="isLoading" @refresh="fetchData" />
 
   <div class="mx-4 my-6 px-4 sm:px-6 lg:px-8">
     <LoadingSpinner v-if="isLoading" class="flex pt-16 justify-center items-center" />
@@ -158,9 +143,10 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { DocumentTextIcon, DocumentCheckIcon, InboxIcon, ClockIcon, ArrowPathIcon } from '@heroicons/vue/24/outline'
+import { DocumentTextIcon, DocumentCheckIcon, InboxIcon, ClockIcon } from '@heroicons/vue/24/outline'
 import { useSolicitudes } from '@/shared/composables/useSolicitudes'
 import LoadingSpinner from '@/shared/components/common/LoadingSpinner.vue'
+import PageHeader from '@/shared/components/common/PageHeader.vue'
 
 const { getSolicitudes, solicitudes } = useSolicitudes()
 const isLoading = ref(false)

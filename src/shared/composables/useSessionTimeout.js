@@ -1,12 +1,17 @@
 import { onMounted, onUnmounted } from 'vue'
 import Swal from 'sweetalert2'
+import { useAuth } from './useAuth'
 
 const INACTIVITY_LIMIT_MS = 45 * 60 * 1000   // 45 minutos
 const WARNING_BEFORE_MS   =  2 * 60 * 1000   // aviso 2 minutos antes
+const TOKEN_REFRESH_MS    = 55 * 60 * 1000   // renovar token cada 55 minutos
 
 export const useSessionTimeout = ({ onTimeout }) => {
+  const { refreshToken } = useAuth()
+
   let inactivityTimer  = null
   let warningTimer     = null
+  let heartbeatTimer   = null
   let warningDisplayed = false
 
   // ─── Reinicia ambos timers ────────────────────────────────────────────────
@@ -70,7 +75,20 @@ export const useSessionTimeout = ({ onTimeout }) => {
   const forceLogout = () => {
     Swal.close()
     warningDisplayed = false
+    clearInterval(heartbeatTimer)
     onTimeout()
+  }
+
+  // ─── Heartbeat: renueva el token cada 55 min independientemente ──────────
+  const startHeartbeat = () => {
+    clearInterval(heartbeatTimer)
+    heartbeatTimer = setInterval(async () => {
+      const ok = await refreshToken()
+      if (!ok) {
+        clearInterval(heartbeatTimer)
+        forceLogout()
+      }
+    }, TOKEN_REFRESH_MS)
   }
 
   // ─── Eventos que se consideran actividad del usuario ─────────────────────
@@ -84,6 +102,7 @@ export const useSessionTimeout = ({ onTimeout }) => {
       window.addEventListener(event, handleActivity, { passive: true })
     )
     resetTimers()
+    startHeartbeat()
   })
 
   onUnmounted(() => {
@@ -92,6 +111,7 @@ export const useSessionTimeout = ({ onTimeout }) => {
     )
     clearTimeout(inactivityTimer)
     clearTimeout(warningTimer)
+    clearInterval(heartbeatTimer)
     Swal.close()
   })
 }

@@ -1,18 +1,9 @@
 <template>
-  <div class="bg-gray-900">
-    <div class="mx-auto px-4 py-3">
-      <h1 class="text-xl font-bold text-gray-900 tracking-tight">Ventanilla</h1>
-    </div>
-  </div>
+  <PageHeader :isLoading="isLoading" @refresh="fetchData" />
+
   <div class="mx-4 my-4 px-4 sm:px-6 lg:px-8">
     <!-- Header -->
-    <div class="sm:flex sm:items-center">
-      <div class="sm:flex-auto flex items-center gap-x-1.5">
-        <h1 class="text-2xl font-semibold text-gray-900">Ventanilla</h1>
-        <button type="button" @click="fetchData" class="inline-flex pt-1 items-center gap-x-1.5 rounded-md text-sm font-semibold">
-          <ArrowPathIcon class="size-6" :class="{ 'animate-spin': isLoading }" />
-        </button>
-      </div>
+    <div class="sm:flex sm:items-center sm:justify-end">
       <div class="mt-4 sm:mt-0 sm:block md:flex justify-between md:w-md">
         <div class="flex flex-1 items-center justify-center mb-4 md:mb-0 md:mx-6 md:justify-end">
           <SearchInput
@@ -51,12 +42,13 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { PlusIcon, ArrowPathIcon } from '@heroicons/vue/20/solid'
+import { PlusIcon } from '@heroicons/vue/20/solid'
 import { useSolicitudes } from '@/shared/composables/useSolicitudes'
 import SolicitudesTable from '@/private_app/ventanilla/components/SolicitudesTable.vue'
 import Pagination from '@/shared/components/common/Pagination.vue'
 import LoadingSpinner from '@/shared/components/common/LoadingSpinner.vue'
 import SearchInput from '@/shared/components/common/SearchInput.vue'
+import PageHeader from '@/shared/components/common/PageHeader.vue'
 
 const router = useRouter()
 const { getSolicitudes, solicitudes } = useSolicitudes()
