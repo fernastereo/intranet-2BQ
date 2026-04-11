@@ -215,6 +215,35 @@ export const useSolicitudes = () => {
     }
   }
 
+  const crearComentario = async (id, contenido) => {
+    apiError.value = null
+    loading.value = true
+
+    try {
+      const response = await fetch(`${BASE_API_URL}/solicitudes/${id}/comentarios`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token.value}`,
+        },
+        body: JSON.stringify({ contenido }),
+      })
+      const data = await response.json()
+
+      if (data.status === 'error') {
+        apiError.value = data.message
+        return null
+      }
+
+      return data.data || data
+    } catch (error) {
+      apiError.value = error.message
+      return null
+    } finally {
+      loading.value = false
+    }
+  }
+
   const getSolicitudes = async (page = 1, pageSize = 10, search = '') => {
     apiError.value = null;
     loading.value = true;
@@ -271,6 +300,7 @@ export const useSolicitudes = () => {
     crearSolicitud,
     actualizarSolicitud,
     agregarAdjuntos,
+    crearComentario,
     solicitarOTP,
     verificarOTP,
     getSolicitud,

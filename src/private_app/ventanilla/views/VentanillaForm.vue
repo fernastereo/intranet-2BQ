@@ -1,5 +1,5 @@
-<template >
-  <PageHeader :isLoading="isLoading" @refresh="fetchData" />
+<template>
+  <PageHeader :isLoading="isLoading" />
   <NuevaSolicitud origen="oficina" />
 </template>
 <script setup>

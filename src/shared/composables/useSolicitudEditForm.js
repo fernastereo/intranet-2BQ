@@ -31,6 +31,7 @@ export function useSolicitudEditForm(id) {
     folios: '',
     anexos: '',
     archivos: [],
+    comentarios: [],
   })
 
   const errors = ref({})
@@ -61,6 +62,12 @@ export function useSolicitudEditForm(id) {
       folios: s.folios ?? '',
       anexos: s.anexos ?? '',
       archivos: [],
+      comentarios: (s.comentarios ?? []).map(c => ({
+        id: c.id,
+        texto: c.contenido,
+        autor: c.nombre,
+        fecha: c.created_at,
+      })),
     }
   }
 
