@@ -102,9 +102,9 @@ const router = createRouter({
             {
               path: 'editar/:id',
               name: 'editar-ventanilla',
-              component: () => import('@/private_app/ventanilla/views/DetalleSolicitudView.vue'),
+              component: () => import('@/private_app/ventanilla/views/VentanillaEditForm.vue'),
               props: true,
-              meta: { breadcrumb: 'Detalle Solicitud' },
+              meta: { breadcrumb: 'Editar Solicitud' },
             },
           ],
         },
