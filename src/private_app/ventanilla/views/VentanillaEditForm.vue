@@ -100,8 +100,8 @@
             </div>
 
             <!-- Tab Comentarios (placeholder) -->
-            <div v-show="activeTab === 'comentarios'" class="animate-fadeIn py-12 text-center text-gray-400 text-sm">
-              En construcción
+            <div v-show="activeTab === 'comentarios'" class="animate-fadeIn">
+              <ComentariosSection :solicitudId="id" v-model="form.comentarios" />
             </div>
 
             <!-- Tab Respuesta (placeholder) -->
@@ -206,6 +206,7 @@
   import DatosSolicitante from '@/shared/components/solicitud/DatosSolicitante.vue'
   import DatosSolicitud from '@/shared/components/solicitud/DatosSolicitud.vue'
   import DatosAdjuntos from '@/shared/components/solicitud/DatosAdjuntos.vue'
+  import ComentariosSection from '@/private_app/ventanilla/shared/components/ComentariosSection.vue'
   import { useSolicitudEditForm } from '@/shared/composables/useSolicitudEditForm'
   import { useAppSettings } from '@/shared/composables/useAppSettings'
 
