@@ -52,18 +52,7 @@
 
     <!-- Section 3: Documentos Adjuntos -->
     <section class="bg-white rounded-lg shadow-sm p-6">
-      <h2 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-3">
-        <span class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center text-sm font-bold text-[#1A4972]">3</span>
-        Documentos Adjuntos
-      </h2>
-
-      <div>
-        <p class="text-sm text-gray-600 mb-6 leading-relaxed">
-          Adjunte todos los documentos requeridos para su solicitud. Los archivos deben estar en formato PDF, JPG o PNG con un tamaño máximo de 10 MB por archivo.
-        </p>
-
-        <FileUpload v-model="form.archivos" label="Seleccionar Archivos" />
-      </div>
+      <DatosAdjuntos v-model:form="form"/>
     </section>
 
     <!-- Submit Button -->
@@ -91,9 +80,7 @@
 <script setup>
   // 1. Imports
   import { ref, computed, onMounted } from 'vue'
-  import FileUpload from '@/shared/components/common/FileUpload.vue'
   import Sticker from '@/shared/components/solicitud/Sticker.vue'
-  import { useCategoriaDocumentos } from '@/shared/composables/useCategoriaDocumentos'
   import { useSolicitudes } from '@/shared/composables/useSolicitudes'
   import { useAppSettings } from '@/shared/composables/useAppSettings'
   import { useTiposResponsable } from '@/shared/composables/useTiposResponsable'
@@ -101,6 +88,7 @@
   import { useAuth } from '@/shared/composables/useAuth'
   import DatosSolicitante from '@/shared/components/solicitud/DatosSolicitante.vue'
   import DatosSolicitud from '@/shared/components/solicitud/DatosSolicitud.vue'
+  import DatosAdjuntos from '@/shared/components/solicitud/DatosAdjuntos.vue'
 
   const props = defineProps({
     origen: {
