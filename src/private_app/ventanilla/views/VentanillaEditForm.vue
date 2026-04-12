@@ -160,14 +160,6 @@
               </span>
             </div>
             <div>
-              <p class="text-xs text-gray-500 mb-1">
-                Asgnado
-              </p>
-              <p class="text-sm text-gray-900 capitalize">
-                {{ solicitudData.usuario_asignado?.nombre }}
-              </p>
-            </div>
-            <div>
               <p class="text-xs text-gray-500 mb-1">Fecha de Creación</p>
               <p class="text-sm text-gray-900">{{ formatDateTime(solicitudData.created_at) }}</p>
             </div>
@@ -204,6 +196,11 @@
           </div>
         </div>
 
+        <AsignacionesSection
+          :solicitud-id="id"
+          v-model:asignados="solicitudData.asignados"
+        />
+
         <!-- Línea de tiempo -->
         <div v-if="solicitudData.historial_estados?.length" class="bg-white rounded-lg shadow-sm p-6">
           <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4">Línea de Tiempo</h3>
@@ -233,6 +230,7 @@
   import DatosSolicitud from '@/shared/components/solicitud/DatosSolicitud.vue'
   import DatosAdjuntos from '@/shared/components/solicitud/DatosAdjuntos.vue'
   import ComentariosSection from '@/private_app/ventanilla/shared/components/ComentariosSection.vue'
+  import AsignacionesSection from '@/private_app/ventanilla/shared/components/AsignacionesSection.vue'
   import { useSolicitudEditForm } from '@/shared/composables/useSolicitudEditForm'
   import { useAppSettings } from '@/shared/composables/useAppSettings'
 
