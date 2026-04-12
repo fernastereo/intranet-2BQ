@@ -160,6 +160,14 @@
               </span>
             </div>
             <div>
+              <p class="text-xs text-gray-500 mb-1">
+                Asgnado
+              </p>
+              <p class="text-sm text-gray-900 capitalize">
+                {{ solicitudData.usuario_asignado?.nombre }}
+              </p>
+            </div>
+            <div>
               <p class="text-xs text-gray-500 mb-1">Fecha de Creación</p>
               <p class="text-sm text-gray-900">{{ formatDateTime(solicitudData.created_at) }}</p>
             </div>
@@ -174,6 +182,24 @@
               <p class="text-sm text-gray-900 capitalize">
                 {{ solicitudData.origen === 'web' ? 'Web' : solicitudData.usuario_receptor?.nombre }}
               </p>
+            </div>
+            <div class="flex flex-row gap-16">
+              <div>
+                <p class="text-xs text-gray-500 mb-1">
+                  Comentarios
+                </p>
+                <p class="text-sm text-gray-900 capitalize">
+                  {{ solicitudData.comentarios?.length || "No" }}
+                </p>
+              </div>
+              <div>
+                <p class="text-xs text-gray-500 mb-1">
+                  Respuesta
+                </p>
+                <p class="text-sm text-gray-900 capitalize">
+                  {{ solicitudData.respuesta ? 'Si' : 'No' }}
+                </p>
+              </div>
             </div>
           </div>
         </div>

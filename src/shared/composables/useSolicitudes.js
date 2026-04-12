@@ -215,6 +215,62 @@ export const useSolicitudes = () => {
     }
   }
 
+  const editarComentario = async (solicitudId, comentarioId, contenido) => {
+    apiError.value = null
+    loading.value = true
+
+    try {
+      const response = await fetch(`${BASE_API_URL}/solicitudes/${solicitudId}/comentarios/${comentarioId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token.value}`,
+        },
+        body: JSON.stringify({ contenido }),
+      })
+      const data = await response.json()
+
+      if (data.status === 'error') {
+        apiError.value = data.message
+        return null
+      }
+
+      return data.data || data
+    } catch (error) {
+      apiError.value = error.message
+      return null
+    } finally {
+      loading.value = false
+    }
+  }
+
+  const eliminarComentario = async (solicitudId, comentarioId) => {
+    apiError.value = null
+    loading.value = true
+
+    try {
+      const response = await fetch(`${BASE_API_URL}/solicitudes/${solicitudId}/comentarios/${comentarioId}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token.value}`,
+        },
+      })
+      const data = await response.json()
+
+      if (data.status === 'error') {
+        apiError.value = data.message
+        return false
+      }
+
+      return true
+    } catch (error) {
+      apiError.value = error.message
+      return false
+    } finally {
+      loading.value = false
+    }
+  }
+
   const crearComentario = async (id, contenido) => {
     apiError.value = null
     loading.value = true
@@ -301,6 +357,8 @@ export const useSolicitudes = () => {
     actualizarSolicitud,
     agregarAdjuntos,
     crearComentario,
+    editarComentario,
+    eliminarComentario,
     solicitarOTP,
     verificarOTP,
     getSolicitud,
