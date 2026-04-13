@@ -285,6 +285,42 @@ export const useSolicitudes = () => {
     }
   }
 
+  const respuestaLoading = ref(false)
+
+  const crearRespuesta = async (solicitudId, payload) => {
+    apiError.value = null
+    respuestaLoading.value = true
+
+    const fd = new FormData()
+    fd.append('contenido', payload.contenido)
+    fd.append('resultado', payload.resultado)
+    fd.append('canal_notificacion', payload.canal_notificacion)
+    fd.append('visible_ciudadano', payload.visible_ciudadano ? '1' : '0')
+    if (payload.fecha_notificacion) fd.append('fecha_notificacion', payload.fecha_notificacion)
+    payload.archivos?.forEach((f) => fd.append('files[]', f))
+
+    try {
+      const response = await fetch(`${BASE_API_URL}/solicitudes/${solicitudId}/respuesta`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token.value}` },
+        body: fd,
+      })
+      const data = await response.json()
+
+      if (data.status === 'error') {
+        apiError.value = data.message
+        return null
+      }
+
+      return data.data ?? data
+    } catch (error) {
+      apiError.value = error.message
+      return null
+    } finally {
+      respuestaLoading.value = false
+    }
+  }
+
   const uploadAdjuntosLoading = ref(false)
 
   const agregarAdjuntos = async (id, files) => {
@@ -457,7 +493,9 @@ export const useSolicitudes = () => {
     apiError,
     asignacionesLoading,
     uploadAdjuntosLoading,
+    respuestaLoading,
     crearSolicitud,
+    crearRespuesta,
     actualizarSolicitud,
     agregarAdjuntos,
     crearComentario,
