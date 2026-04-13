@@ -17,7 +17,7 @@
           id="nuevoComentario"
           v-model="nuevoComentario"
           class="w-full px-3.5 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A4972] focus:border-transparent resize-none"
-          rows="3"
+          rows="2"
           placeholder="Escriba su comentario aquí..."
         ></textarea>
         <p v-if="apiError" class="text-xs text-red-500">{{ apiError }}</p>
@@ -78,25 +78,48 @@
 
           <!-- Contenido del comentario -->
           <div class="flex-1 -mt-0.5 pb-0">
-            <div class="rounded-xl bg-gray-50 p-2">
-              <div class="flex items-center justify-between gap-2 mb-2">
-                <span class="text-xs font-semibold text-gray-900">{{ comentario.autor }}</span>
-                <span class="text-xs text-gray-500">{{ formatFechaHora(comentario.fecha) }}</span>
+            <!-- Modo edición -->
+            <div v-if="editandoId === comentario.id" class="flex flex-col gap-2">
+              <textarea
+                v-model="textoEditando"
+                class="w-full px-3 py-2 text-xs border border-[#1A4972] rounded-lg focus:ring-2 focus:ring-[#1A4972] focus:border-transparent resize-none"
+                rows="3"
+              ></textarea>
+              <div class="flex gap-2 justify-end">
+                <button type="button" @click="cancelarEdicion" class="text-xs text-gray-500 hover:text-gray-700 transition-colors">Cancelar</button>
+                <button type="button" @click="guardarEdicion(comentario.id)" :disabled="loading" class="text-xs font-semibold text-white bg-[#1A4972] hover:bg-[#143a5c] px-3 py-1 rounded-lg transition-colors disabled:opacity-50">Guardar</button>
               </div>
-              <p class="text-xs text-gray-600 leading-relaxed">{{ comentario.texto }}</p>
             </div>
-            <!-- Botón eliminar -->
-            <button
-              type="button"
-              @click="eliminarComentario(comentario.id)"
-              class="mt-2 inline-flex items-center gap-1 text-xs text-gray-400 hover:text-red-600 transition-colors"
-            >
-              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="3 6 5 6 21 6" />
-                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-              </svg>
-              Eliminar
-            </button>
+            <!-- Modo lectura -->
+            <div v-else>
+              <div class="rounded-xl bg-gray-50 p-2">
+                <div class="flex items-center justify-between gap-2 mb-2">
+                  <span class="text-xs font-semibold text-gray-900">{{ comentario.autor }}</span>
+                  <span class="text-xs text-gray-500">{{ formatFechaHora(comentario.fecha) }}</span>
+                </div>
+                <p class="text-xs text-gray-600 leading-relaxed">{{ comentario.texto }}</p>
+              </div>
+              <div class="flex justify-between">
+                <button
+                  type="button"
+                  @click="borrarComentario(comentario.id)"
+                  class="mt-2 inline-flex items-center gap-1 text-xs text-gray-400 hover:text-red-600 transition-colors cursor-pointer"
+                >
+                  <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="3 6 5 6 21 6" />
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                  </svg>
+                  Eliminar
+                </button>
+                <button
+                  type="button"
+                  @click="iniciarEdicion(comentario)"
+                  class="text-gray-400 hover:text-indigo-900 cursor-pointer"
+                >
+                  <PencilSquareIcon class="size-4" />
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -108,6 +131,7 @@
   import { ref } from 'vue'
   import { useSolicitudes } from '@/shared/composables/useSolicitudes'
   import ComentarioIcon from '@/shared/components/common/icons/ComentarioIcon.vue'
+  import { PencilSquareIcon } from '@heroicons/vue/20/solid'
 
   const props = defineProps({
     solicitudId: { type: [String, Number], required: true },
@@ -116,10 +140,12 @@
 
   const emit = defineEmits(['update:modelValue'])
 
-  const { crearComentario, loading, apiError } = useSolicitudes()
+  const { crearComentario, editarComentario, eliminarComentario, loading, apiError } = useSolicitudes()
 
   const comentarios = ref([...props.modelValue])
   const nuevoComentario = ref('')
+  const editandoId = ref(null)
+  const textoEditando = ref('')
 
   async function agregarComentario() {
     if (!nuevoComentario.value.trim()) return
@@ -131,19 +157,45 @@
     comentarios.value = [{
       id: resultado.id,
       texto: resultado.contenido,
-      autor: resultado.autor ?? 'Funcionario',
+      autor: resultado.nombre ?? 'Funcionario',
       fecha: resultado.created_at,
     }, ...comentarios.value]
     emit('update:modelValue', comentarios.value)
     nuevoComentario.value = ''
   }
 
-  function eliminarComentario(id) {
+  const iniciarEdicion = (comentario) => {
+    editandoId.value = comentario.id
+    textoEditando.value = comentario.texto
+  }
+
+  const cancelarEdicion = () => {
+    editandoId.value = null
+    textoEditando.value = ''
+  }
+
+  const guardarEdicion = async (id) => {
+    if (!textoEditando.value.trim()) return
+
+    const resultado = await editarComentario(props.solicitudId, id, textoEditando.value.trim())
+    if (!resultado) return
+
+    comentarios.value = comentarios.value.map(c =>
+      c.id === id ? { ...c, texto: resultado.contenido ?? textoEditando.value.trim() } : c
+    )
+    emit('update:modelValue', comentarios.value)
+    cancelarEdicion()
+  }
+
+  const borrarComentario = async (id) => {
+    const ok = await eliminarComentario(props.solicitudId, id)
+    if (!ok) return
+
     comentarios.value = comentarios.value.filter(c => c.id !== id)
     emit('update:modelValue', comentarios.value)
   }
 
-  function formatFechaHora(fechaISO) {
+  const formatFechaHora = (fechaISO) => {
     return new Date(fechaISO).toLocaleString('es-CO', {
       year: 'numeric',
       month: 'short',

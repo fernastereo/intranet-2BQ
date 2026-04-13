@@ -46,6 +46,16 @@ export const useAuth = () => {
     }
   };
 
+  const getUserInitials = (name) => {
+    if(!name) return '?'
+
+    return name
+      .split(' ')
+      .slice(0, 2)
+      .map(name => name.charAt(0).toUpperCase())
+      .join('')
+  }
+
   const logout = async () => {
     const BASE_API_URL = import.meta.env.VITE_BASE_API_URL;
     authError.value = null;
@@ -191,6 +201,7 @@ export const useAuth = () => {
     setToken,
     setUser,
     getUser,
+    getUserInitials,
   };
 }
 

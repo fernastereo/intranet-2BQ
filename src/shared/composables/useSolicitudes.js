@@ -182,6 +182,109 @@ export const useSolicitudes = () => {
     }
   }
 
+  const asignacionesLoading = ref(false)
+
+  const getUsuarios = async () => {
+    apiError.value = null
+    asignacionesLoading.value = true
+
+    try {
+      const response = await fetch(`${BASE_API_URL}/users`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token.value}`,
+        },
+      })
+      const data = await response.json()
+
+      if (data.status === 'error') {
+        apiError.value = data.message
+        return []
+      }
+
+      const raw = data.data ?? data
+      return Array.isArray(raw) ? raw : []
+    } catch (error) {
+      apiError.value = error.message
+      return []
+    } finally {
+      asignacionesLoading.value = false
+    }
+  }
+
+  /** POST /solicitudes/:id/asignaciones — un solo `user_id` por petición (flujo Agregar en UI). */
+  const asignarUsuario = async (solicitudId, userId) => {
+    if (userId == null || userId === '') return null
+
+    apiError.value = null
+    asignacionesLoading.value = true
+
+    try {
+      const response = await fetch(`${BASE_API_URL}/solicitudes/${solicitudId}/asignaciones`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token.value}`,
+        },
+        body: JSON.stringify({ user_id: Number(userId) }),
+      })
+      const data = await response.json()
+
+      if (data.status === 'error') {
+        apiError.value = data.message
+        return null
+      }
+
+      return data.data ?? data ?? true
+    } catch (error) {
+      apiError.value = error.message
+      return null
+    } finally {
+      asignacionesLoading.value = false
+    }
+  }
+
+  const desasignarUsuario = async (solicitudId, userId) => {
+    apiError.value = null
+    asignacionesLoading.value = true
+
+    try {
+      const response = await fetch(`${BASE_API_URL}/solicitudes/${solicitudId}/asignaciones/${userId}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token.value}`,
+        },
+      })
+      const text = await response.text()
+      let data = {}
+      if (text) {
+        try {
+          data = JSON.parse(text)
+        } catch {
+          apiError.value = 'Respuesta no valida del servidor'
+          return false
+        }
+      }
+
+      if (!response.ok) {
+        apiError.value = data.message || `Error ${response.status}`
+        return false
+      }
+      if (data.status === 'error') {
+        apiError.value = data.message
+        return false
+      }
+
+      return true
+    } catch (error) {
+      apiError.value = error.message
+      return false
+    } finally {
+      asignacionesLoading.value = false
+    }
+  }
+
   const uploadAdjuntosLoading = ref(false)
 
   const agregarAdjuntos = async (id, files) => {
@@ -212,6 +315,62 @@ export const useSolicitudes = () => {
       return null
     } finally {
       uploadAdjuntosLoading.value = false
+    }
+  }
+
+  const editarComentario = async (solicitudId, comentarioId, contenido) => {
+    apiError.value = null
+    loading.value = true
+
+    try {
+      const response = await fetch(`${BASE_API_URL}/solicitudes/${solicitudId}/comentarios/${comentarioId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token.value}`,
+        },
+        body: JSON.stringify({ contenido }),
+      })
+      const data = await response.json()
+
+      if (data.status === 'error') {
+        apiError.value = data.message
+        return null
+      }
+
+      return data.data || data
+    } catch (error) {
+      apiError.value = error.message
+      return null
+    } finally {
+      loading.value = false
+    }
+  }
+
+  const eliminarComentario = async (solicitudId, comentarioId) => {
+    apiError.value = null
+    loading.value = true
+
+    try {
+      const response = await fetch(`${BASE_API_URL}/solicitudes/${solicitudId}/comentarios/${comentarioId}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token.value}`,
+        },
+      })
+      const data = await response.json()
+
+      if (data.status === 'error') {
+        apiError.value = data.message
+        return false
+      }
+
+      return true
+    } catch (error) {
+      apiError.value = error.message
+      return false
+    } finally {
+      loading.value = false
     }
   }
 
@@ -296,14 +455,20 @@ export const useSolicitudes = () => {
     solicitudes,
     loading,
     apiError,
+    asignacionesLoading,
     uploadAdjuntosLoading,
     crearSolicitud,
     actualizarSolicitud,
     agregarAdjuntos,
     crearComentario,
+    editarComentario,
+    eliminarComentario,
     solicitarOTP,
     verificarOTP,
     getSolicitud,
     getSolicitudes,
+    getUsuarios,
+    asignarUsuario,
+    desasignarUsuario,
   }
 }
