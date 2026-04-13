@@ -96,7 +96,11 @@
 
             <!-- Tab: Adjuntos -->
             <div v-show="activeTab === 'adjuntos'" class="animate-fadeIn">
-              <DatosAdjuntos v-model:form="form" :adjuntos="solicitudData.adjuntos" />
+              <DatosAdjuntos
+                v-model:form="form"
+                :adjuntos="solicitudData?.adjuntos ?? []"
+                @delete-adjunto="handleEliminarAdjunto"
+              />
             </div>
 
             <!-- Tab Comentarios (placeholder) -->
@@ -274,6 +278,14 @@
 
   const tabHasErrors = (tabId) =>
     tabFields[tabId]?.some(field => !!errors.value[field]) ?? false
+
+  function handleEliminarAdjunto(adjunto) {
+    solicitudData.value = {
+      ...solicitudData.value,
+      adjuntos: (solicitudData.value?.adjuntos ?? []).filter((a) => a.id !== adjunto.id),
+    }
+    form.value.adjuntosEliminados.push(adjunto.id)
+  }
 
   function formatDateTime(dateTimeStr) {
     if (!dateTimeStr) return '-'

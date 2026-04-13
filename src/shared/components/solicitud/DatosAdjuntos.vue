@@ -16,23 +16,34 @@
     <FileUpload v-model="form.archivos" label="Seleccionar Archivos" />
     <div v-if="adjuntos && adjuntos.length > 0" class="flex flex-col gap-2 mt-3">
       <div
-        v-for="(archivo, idx) in adjuntos"
-        :key="idx"
+        v-for="archivo in adjuntos"
+        :key="archivo.id"
         class="flex items-center justify-between rounded-lg bg-gray-100 px-4 py-3"
       >
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-lg flex items-center justify-center"
+        <div class="flex items-center gap-3 min-w-0">
+          <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
             :class="archivo.mime_type === 'application/pdf' ? 'bg-red-100 text-red-600' : 'bg-blue-100 text-blue-600'">
-            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
               <polyline points="14 2 14 8 20 8" />
             </svg>
           </div>
-          <div>
-            <a :href="archivo.url" target="_blank" class="text-sm font-medium text-gray-900">{{ archivo.file_name }}</a>
+          <div class="min-w-0">
+            <a :href="archivo.url" target="_blank" class="text-sm font-medium text-gray-900 truncate block">{{ archivo.file_name }}</a>
             <p class="text-xs text-gray-500">{{ formatFileSize(archivo.size_bytes) }}</p>
           </div>
         </div>
+        <button
+          type="button"
+          @click="$emit('delete-adjunto', archivo)"
+          class="p-1.5 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors flex-shrink-0"
+          :aria-label="'Eliminar archivo ' + archivo.file_name"
+        >
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
       </div>
     </div>
   </div>
@@ -45,10 +56,11 @@
   const form = defineModel('form', { required: true })
   defineProps({
     adjuntos: {
-      type: Object,
-      required: true
+      type: Array,
+      default: () => []
     }
   })
+  defineEmits(['delete-adjunto'])
 
   const formatFileSize = (bytes) => {
     if (bytes === 0) return '0 B'

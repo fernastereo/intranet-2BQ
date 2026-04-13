@@ -31,6 +31,7 @@ export function useSolicitudEditForm(id) {
     folios: '',
     anexos: '',
     archivos: [],
+    adjuntosEliminados: [],
     comentarios: [],
   })
 
@@ -62,6 +63,7 @@ export function useSolicitudEditForm(id) {
       folios: s.folios ?? '',
       anexos: s.anexos ?? '',
       archivos: [],
+      adjuntosEliminados: [],
       comentarios: (s.comentarios ?? []).map(c => ({
         id: c.id,
         texto: c.contenido,
@@ -90,6 +92,9 @@ export function useSolicitudEditForm(id) {
     }
     if (solicitudData.value?.origen === 'oficina' && user.value?.id) {
       payload.usuario_receptor_id = user.value.id
+    }
+    if (form.value.adjuntosEliminados.length) {
+      payload.adjuntos_eliminar = [...form.value.adjuntosEliminados]
     }
     return payload
   }
