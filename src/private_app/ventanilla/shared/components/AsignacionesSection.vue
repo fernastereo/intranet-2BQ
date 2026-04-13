@@ -2,7 +2,7 @@
   <div class="bg-white rounded-lg shadow-sm p-6">
     <div class="flex items-center gap-3 mb-4">
       <div class="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center">
-        <UserGroupIcon class="w-5 h-5 text-indigo-700" />
+        <UserGroupIcon class="w-5 h-5 " />
       </div>
       <div>
         <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wide">Asignados</h3>
@@ -18,6 +18,9 @@
         :key="item.id"
         class="flex items-center justify-between gap-2 rounded-lg bg-gray-50 px-3 py-2"
       >
+        <div class="w-7 h-7 font-bold rounded-full bg-indigo-100 flex items-center justify-center">
+          <span class="text-xs text-gray-900 capitalize">{{ getUserInitials(item.name) }}</span>
+        </div>
         <span class="text-sm text-gray-900 capitalize truncate">{{ item.name }}</span>
         <button
           type="button"
@@ -71,14 +74,15 @@
   import Swal from 'sweetalert2'
   import { UserGroupIcon } from '@heroicons/vue/24/outline'
   import { useSolicitudes } from '@/shared/composables/useSolicitudes'
-
+  import { useAuth } from '@/shared/composables/useAuth'
   const props = defineProps({
     solicitudId: { type: [String, Number], required: true },
   })
-
+  
   const asignados = defineModel('asignados', { type: Array, default: () => [] })
-
+  
   const { getUsuarios, asignarUsuario, desasignarUsuario, asignacionesLoading, apiError } = useSolicitudes()
+  const { getUserInitials } = useAuth()
 
   const usuarios = ref([])
   const usuarioSeleccionado = ref(null)

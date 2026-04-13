@@ -72,12 +72,16 @@
           <Badge :color="solicitud.estado?.class">{{ solicitud.estado?.nombre }}</Badge>
         </td>
 
-        <!-- Indicadores: adjuntos / historial / respuesta -->
+        <!-- Indicadores: adjuntos / comentarios/ historial / respuesta -->
         <td class="px-3 py-3 text-sm whitespace-nowrap">
           <div class="flex items-center gap-2">
             <span :class="solicitud.adjuntos?.length ? 'text-indigo-500' : 'text-gray-300'"
               :title="solicitud.adjuntos?.length ? `${solicitud.adjuntos.length} adjunto(s)` : 'Sin adjuntos'">
               <PaperClipIcon class="size-4" />
+            </span>
+            <span :class="solicitud.comentarios?.length ? 'text-orange-400' : 'text-gray-300'"
+              :title="solicitud.comentarios?.length ? `${solicitud.comentarios.length} comentario(s)` : 'Sin comentarios'">
+              <ChatBubbleBottomCenterTextIcon class="size-4" />
             </span>
             <span :class="solicitud.historial_estados?.length > 1 ? 'text-amber-500' : 'text-gray-300'"
               :title="solicitud.historial_estados?.length > 1 ? `${solicitud.historial_estados.length} estados` : 'Sin historial'">
@@ -122,6 +126,7 @@ import {
   ClockIcon,
   GlobeAltIcon,
   BuildingOfficeIcon,
+  ChatBubbleBottomCenterTextIcon,
 } from '@heroicons/vue/20/solid'
 import Badge from '@/shared/components/common/Badge.vue'
 

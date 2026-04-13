@@ -96,7 +96,7 @@
 
             <!-- Tab: Adjuntos -->
             <div v-show="activeTab === 'adjuntos'" class="animate-fadeIn">
-              <DatosAdjuntos v-model:form="form" />
+              <DatosAdjuntos v-model:form="form" :adjuntos="solicitudData.adjuntos" />
             </div>
 
             <!-- Tab Comentarios (placeholder) -->
@@ -116,7 +116,7 @@
               :to="{ name: 'ventanilla' }"
               class="inline-flex items-center justify-center gap-2 rounded-lg bg-white border border-gray-300 px-6 py-3 text-sm font-semibold text-gray-900 shadow-sm hover:bg-gray-50 transition-colors duration-200"
             >
-              Cancelar
+              Regresar
             </router-link>
             <button
               type="submit"
@@ -144,11 +144,17 @@
         <div class="bg-white rounded-lg shadow-sm p-6">
           <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4">Información General</h3>
           <div class="flex flex-col gap-4">
-            <div>
-              <p class="text-xs text-gray-500 mb-1">No. de Solicitud</p>
-              <p class="text-sm font-bold font-mono text-[#1A4972]">
-                {{ settings?.prefijo_ventanilla }}-{{ solicitudData.vigencia }}-{{ solicitudData.numerosolicitud?.toString().padStart(4, '0') }}
-              </p>
+            <div class="flex flex-row gap-16">
+              <div>
+                <p class="text-xs text-gray-500 mb-1">No. de Solicitud</p>
+                <p class="text-sm font-bold font-mono text-[#1A4972]">
+                  {{ settings?.prefijo_ventanilla }}-{{ solicitudData.vigencia }}-{{ solicitudData.numerosolicitud?.toString().padStart(4, '0') }}
+                </p>
+              </div>
+              <div>
+                <p class="text-xs text-gray-500 mb-1">Vigencia</p>
+                <p class="text-sm text-gray-900">{{ solicitudData.vigencia }}</p>
+              </div>
             </div>
             <div>
               <p class="text-xs text-gray-500 mb-1">Estado</p>
@@ -162,10 +168,6 @@
             <div>
               <p class="text-xs text-gray-500 mb-1">Fecha de Creación</p>
               <p class="text-sm text-gray-900">{{ formatDateTime(solicitudData.created_at) }}</p>
-            </div>
-            <div>
-              <p class="text-xs text-gray-500 mb-1">Vigencia</p>
-              <p class="text-sm text-gray-900">{{ solicitudData.vigencia }}</p>
             </div>
             <div>
               <p class="text-xs text-gray-500 mb-1">
@@ -238,7 +240,6 @@
     id: { type: String, required: true }
   })
 
-  const router = useRouter()
   const { settings } = useAppSettings()
 
   const tabs = [
@@ -298,7 +299,6 @@
         timer: 2000,
         showConfirmButton: false,
       })
-      router.push({ name: 'ventanilla' })
       return
     }
 

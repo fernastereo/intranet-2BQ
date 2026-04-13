@@ -4,7 +4,7 @@
     <span class="sr-only">Your profile</span>
     <img v-if="userData?.avatar" class="size-8 rounded-full bg-gray-800" :src="userData.avatar" :alt="`${userData.name} avatar`" />
     <div v-else class="size-8 rounded-full bg-gray-400 flex justify-center items-center">
-      <span class="text-gray-900">{{ getUserInitials() }}</span>
+      <span class="text-gray-900">{{ getUserInitials(userData?.name) }}</span>
     </div>
     <span class="hidden md:block" aria-hidden="true">{{ userData?.name }}</span>
   </div>
@@ -17,7 +17,7 @@
   
   const isLoading = ref(false);
 
-  const { getUser } = useAuth()
+  const { getUser, getUserInitials } = useAuth()
 
   const userData = ref(null)
 
@@ -33,16 +33,6 @@
     } finally {
       isLoading.value = false;
     }
-  }
-
-  const getUserInitials = () => {
-    if(!userData.value?.name) return '?'
-
-    return userData.value.name
-      .split(' ')
-      .slice(0, 2)
-      .map(name => name.charAt(0).toUpperCase())
-      .join('')
   }
 
   //onMounted call api for user data
