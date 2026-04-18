@@ -302,6 +302,9 @@
   }
 
   async function onSubmit() {
+    console.log('Tab activo al guardar:', activeTab.value)
+  // activeTab.value puede ser: 'solicitante', 'solicitud', 'adjuntos', 'comentarios' o 'respuesta'
+    return //vamos por aqui
     const success = await handleUpdate()
 
     if (success) {
