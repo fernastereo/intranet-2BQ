@@ -2,16 +2,16 @@
   <div>
     <!-- Header -->
     <div class="flex items-center gap-3 mb-6">
-      <div class="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center">
-        <DocumentCheckIcon class="w-5 h-5 text-emerald-700" />
+      <div class="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center">
+        <DocumentCheckIcon class="w-5 h-5" />
       </div>
       <div>
-        <h2 class="text-lg font-bold text-gray-900">Respuesta Oficial</h2>
+        <h2 class="text-lg font-bold text-text">Respuesta Oficial</h2>
         <p class="text-sm text-gray-500">Registre la respuesta final a esta solicitud</p>
       </div>
     </div>
 
-    <!-- Error -->
+    <!-- Error API -->
     <div v-if="apiError" class="mb-4 rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
       {{ apiError }}
     </div>
@@ -21,27 +21,18 @@
       <div class="rounded-xl border border-gray-200 overflow-hidden mb-4">
 
         <!-- Cabecera: resultado + meta -->
-        <div class="px-5 py-4 bg-gray-50 border-b border-gray-200 flex flex-wrap items-center justify-between gap-3">
-          <div class="flex flex-wrap items-center gap-3">
-            <span
-              class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold"
-              :class="resultadoActual?.badgeClass"
-            >
-              <span class="w-1.5 h-1.5 rounded-full" :class="resultadoActual?.dotClass" />
-              {{ resultadoActual?.label }}
-            </span>
-            <span class="text-xs text-gray-500">
-              Registrada por
-              <span class="font-semibold text-gray-700">{{ respuesta.usuario?.name ?? 'Sistema' }}</span>
-              el {{ formatDateTime(respuesta.created_at) }}
-            </span>
-          </div>
+        <div class="px-5 py-4 bg-gray-50 border-b border-gray-200 flex flex-wrap items-center gap-3">
           <span
-            class="inline-flex items-center gap-1.5 text-xs font-medium"
-            :class="respuesta.visible_ciudadano ? 'text-emerald-700' : 'text-gray-400'"
+            class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold"
+            :class="resultadoActual?.badgeClass"
           >
-            <component :is="respuesta.visible_ciudadano ? EyeIcon : EyeSlashIcon" class="w-3.5 h-3.5" />
-            {{ respuesta.visible_ciudadano ? 'Visible para el ciudadano' : 'No visible para el ciudadano' }}
+            <span class="w-1.5 h-1.5 rounded-full" :class="resultadoActual?.dotClass" />
+            {{ resultadoActual?.label }}
+          </span>
+          <span class="text-xs text-gray-500">
+            Registrada por
+            <span class="font-semibold text-gray-700">{{ respuesta.usuario_nombre ?? respuesta.usuario_name ?? 'Sistema' }}</span>
+            el {{ formatDateTime(respuesta.created_at) }}
           </span>
         </div>
 
@@ -96,7 +87,8 @@
         <button
           type="button"
           @click="iniciarEdicion"
-          class="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-[#1A4972] border border-[#1A4972] hover:bg-[#1A4972] hover:text-white transition-colors duration-200"
+          :disabled="respuestaLoading"
+          class="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-[#1A4972] border border-[#1A4972] hover:bg-[#1A4972] hover:text-white transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <PencilSquareIcon class="w-4 h-4" />
           Editar respuesta
@@ -128,8 +120,43 @@
           </div>
         </div>
 
+        <!-- Adjuntos existentes (solo en edición) -->
+        <div v-if="editando && respuesta?.adjuntos?.length" class="flex flex-col gap-2">
+          <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Archivos adjuntos actuales</p>
+          <a
+            v-for="archivo in respuesta.adjuntos"
+            :key="archivo.id"
+            :href="archivo.url"
+            target="_blank"
+            class="flex items-center gap-3 rounded-lg bg-gray-50 px-4 py-3 hover:bg-gray-100 transition-colors group"
+          >
+            <div
+              class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
+              :class="archivo.mime_type === 'application/pdf' ? 'bg-red-100 text-red-600' : 'bg-blue-100 text-blue-600'"
+            >
+              <PaperClipIcon class="w-4 h-4" />
+            </div>
+            <div class="min-w-0 flex-1">
+              <p class="text-sm font-medium text-gray-900 truncate group-hover:text-[#1A4972]">{{ archivo.file_name }}</p>
+              <p class="text-xs text-gray-500">{{ formatFileSize(archivo.size_bytes) }}</p>
+            </div>
+            <ArrowDownTrayIcon class="w-4 h-4 text-gray-400 group-hover:text-[#1A4972] flex-shrink-0" />
+          </a>
+        </div>
+
         <!-- FileUpload -->
-        <FileUpload v-model="form.archivos" label="Documentos de la respuesta" />
+        <FileUpload v-model="form.archivos" label="Agregar nuevos documentos" />
+
+        <!-- Botón cancelar edición (solo al editar) -->
+        <div v-if="editando" class="flex justify-start">
+          <button
+            type="button"
+            @click="cancelarEdicion"
+            class="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-gray-600 border border-gray-300 hover:bg-gray-50 transition-colors duration-200"
+          >
+            Cancelar
+          </button>
+        </div>
       </div>
     </template>
   </div>
@@ -140,13 +167,10 @@
   import Swal from 'sweetalert2'
   import {
     DocumentCheckIcon,
-    EyeIcon,
-    EyeSlashIcon,
     BellIcon,
     PaperClipIcon,
     PencilSquareIcon,
     ArrowDownTrayIcon,
-    CheckIcon,
   } from '@heroicons/vue/24/outline'
   import FileUpload from '@/shared/components/common/FileUpload.vue'
   import { useSolicitudes } from '@/shared/composables/useSolicitudes'
@@ -157,54 +181,24 @@
 
   const respuesta = defineModel('respuesta', { default: null })
 
-  const { crearRespuesta, respuestaLoading, apiError } = useSolicitudes()
+  const { crearRespuesta, editarRespuesta, respuestaLoading, apiError } = useSolicitudes()
 
-  // ─── Constantes ────────────────────────────────────────────────────────────
+  // ─── Constantes (solo para vista de lectura) ────────────────────────────────
 
   const RESULTADOS = [
-    {
-      value: 'aprobado',
-      label: 'Aprobado',
-      activeClass: 'border-emerald-500 bg-emerald-50 text-emerald-700',
-      dotClass: 'bg-emerald-500',
-      badgeClass: 'bg-emerald-100 text-emerald-800',
-    },
-    {
-      value: 'negado',
-      label: 'Negado',
-      activeClass: 'border-red-500 bg-red-50 text-red-700',
-      dotClass: 'bg-red-500',
-      badgeClass: 'bg-red-100 text-red-800',
-    },
-    {
-      value: 'parcial',
-      label: 'Aprobado parcialmente',
-      activeClass: 'border-amber-500 bg-amber-50 text-amber-700',
-      dotClass: 'bg-amber-500',
-      badgeClass: 'bg-amber-100 text-amber-800',
-    },
-    {
-      value: 'en_tramite',
-      label: 'En trámite',
-      activeClass: 'border-blue-500 bg-blue-50 text-blue-700',
-      dotClass: 'bg-blue-500',
-      badgeClass: 'bg-blue-100 text-blue-800',
-    },
-    {
-      value: 'archivado',
-      label: 'Archivado',
-      activeClass: 'border-gray-500 bg-gray-100 text-gray-700',
-      dotClass: 'bg-gray-500',
-      badgeClass: 'bg-gray-100 text-gray-700',
-    },
+    { value: 'aprobado',   label: 'Aprobado',               dotClass: 'bg-emerald-500', badgeClass: 'bg-emerald-100 text-emerald-800' },
+    { value: 'negado',     label: 'Negado',                 dotClass: 'bg-red-500',     badgeClass: 'bg-red-100 text-red-800' },
+    { value: 'parcial',    label: 'Aprobado parcialmente',  dotClass: 'bg-amber-500',   badgeClass: 'bg-amber-100 text-amber-800' },
+    { value: 'en_tramite', label: 'En trámite',             dotClass: 'bg-blue-500',    badgeClass: 'bg-blue-100 text-blue-800' },
+    { value: 'archivado',  label: 'Archivado',              dotClass: 'bg-gray-500',    badgeClass: 'bg-gray-100 text-gray-700' },
   ]
 
   const CANALES = [
-    { value: 'email',          label: 'Correo electrónico' },
-    { value: 'presencial',     label: 'Presencial' },
-    { value: 'correo_fisico',  label: 'Correo físico' },
-    { value: 'telefono',       label: 'Teléfono' },
-    { value: 'no_notificado',  label: 'No notificado' },
+    { value: 'email',         label: 'Correo electrónico' },
+    { value: 'presencial',    label: 'Presencial' },
+    { value: 'correo_fisico', label: 'Correo físico' },
+    { value: 'telefono',      label: 'Teléfono' },
+    { value: 'no_notificado', label: 'No notificado' },
   ]
 
   // ─── Estado del formulario ─────────────────────────────────────────────────
@@ -214,10 +208,6 @@
 
   const form = reactive({
     contenido: '',
-    resultado: '',
-    canal_notificacion: 'email',
-    fecha_notificacion: new Date().toISOString().split('T')[0],
-    visible_ciudadano: true,
     archivos: [],
   })
 
@@ -234,14 +224,10 @@
   // ─── Acciones ───────────────────────────────────────────────────────────────
 
   function iniciarEdicion() {
-    form.contenido          = respuesta.value.contenido ?? ''
-    form.resultado          = respuesta.value.resultado ?? ''
-    form.canal_notificacion = respuesta.value.canal_notificacion ?? 'email'
-    form.fecha_notificacion = respuesta.value.fecha_notificacion ?? new Date().toISOString().split('T')[0]
-    form.visible_ciudadano  = respuesta.value.visible_ciudadano ?? true
-    form.archivos           = []
-    formErrors.value        = {}
-    editando.value          = true
+    form.contenido   = respuesta.value.contenido ?? ''
+    form.archivos    = []
+    formErrors.value = {}
+    editando.value   = true
   }
 
   function cancelarEdicion() {
@@ -251,31 +237,37 @@
 
   function validar() {
     formErrors.value = {}
-    if (!form.resultado)       formErrors.value.resultado = 'Seleccione un resultado'
     if (!form.contenido.trim()) formErrors.value.contenido = 'La descripción es requerida'
     return Object.keys(formErrors.value).length === 0
   }
 
   async function guardar() {
-    if (!validar()) return
+    if (respuesta.value && !editando.value) return true
 
-    const resultado = await crearRespuesta(props.solicitudId, {
-      contenido:          form.contenido.trim(),
-      resultado:          form.resultado,
-      canal_notificacion: form.canal_notificacion,
-      fecha_notificacion: form.canal_notificacion !== 'no_notificado' ? form.fecha_notificacion : null,
-      visible_ciudadano:  form.visible_ciudadano,
-      archivos:           form.archivos,
-    })
+    if (!validar()) return false
+
+    const eraEdicion = editando.value && !!respuesta.value?.id
+
+    const payload = {
+      contenido: form.contenido.trim(),
+      archivos:  form.archivos,
+    }
+
+    let resultado
+    if (eraEdicion) {
+      resultado = await editarRespuesta(props.solicitudId, respuesta.value.id, payload)
+    } else {
+      resultado = await crearRespuesta(props.solicitudId, payload)
+    }
 
     if (!resultado) {
       await Swal.fire({
         icon: 'error',
         title: 'No se pudo guardar',
-        text: apiError.value,
+        text: apiError.value || 'Ocurrió un error al guardar la respuesta.',
         showConfirmButton: true,
       })
-      return
+      return false
     }
 
     respuesta.value = resultado
@@ -283,12 +275,18 @@
 
     await Swal.fire({
       icon: 'success',
-      title: 'Respuesta registrada',
+      title: eraEdicion ? 'Respuesta actualizada' : 'Respuesta registrada',
       text: 'La respuesta oficial ha sido guardada correctamente.',
       timer: 2000,
       showConfirmButton: false,
     })
+
+    return true
   }
+
+  // ─── Exposición al padre ─────────────────────────────────────────────────────
+
+  defineExpose({ save: guardar, loading: respuestaLoading })
 
   // ─── Utilidades ─────────────────────────────────────────────────────────────
 
