@@ -115,29 +115,32 @@
 
           </div>
 
-          <div class="flex items-center justify-end gap-4 mt-6">
-            <router-link
-              :to="{ name: 'ventanilla' }"
-              class="inline-flex items-center justify-center gap-2 rounded-lg bg-white border border-gray-300 px-6 py-3 text-sm font-semibold text-gray-900 shadow-sm hover:bg-gray-50 transition-colors duration-200"
-            >
-              Regresar
-            </router-link>
-            <button
-              type="submit"
-              class="inline-flex items-center justify-center gap-2 rounded-lg bg-[#FFA800] px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-[#E69500] transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-              :disabled="isSaving"
-            >
-              <svg v-if="isSaving" class="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10" stroke-opacity="0.25" />
-                <path d="M12 2a10 10 0 0 1 10 10" stroke-opacity="1" />
-              </svg>
-              <svg v-else class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v14a2 2 0 0 1-2 2z" />
-                <polyline points="17 21 17 13 7 13 7 21" />
-                <polyline points="7 3 7 8 15 8" />
-              </svg>
-              {{ isSaving ? 'Guardando...' : 'Guardar Cambios' }}
-            </button>
+          <div class="flex items-center justify-between gap-4 mt-6">
+            <Sticker title="Comprobante" :data="stickerData" />
+            <div class="flex items-center justify-end gap-4">
+              <router-link
+                :to="{ name: 'ventanilla' }"
+                class="inline-flex items-center justify-center gap-2 rounded-lg bg-white border border-gray-300 px-6 py-3 text-sm font-semibold text-gray-900 shadow-sm hover:bg-gray-50 transition-colors duration-200"
+              >
+                Regresar
+              </router-link>
+              <button
+                type="submit"
+                class="inline-flex items-center justify-center gap-2 rounded-lg bg-[#FFA800] px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-[#E69500] transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                :disabled="isSaving"
+              >
+                <svg v-if="isSaving" class="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10" stroke-opacity="0.25" />
+                  <path d="M12 2a10 10 0 0 1 10 10" stroke-opacity="1" />
+                </svg>
+                <svg v-else class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v14a2 2 0 0 1-2 2z" />
+                  <polyline points="17 21 17 13 7 13 7 21" />
+                  <polyline points="7 3 7 8 15 8" />
+                </svg>
+                {{ isSaving ? 'Guardando...' : 'Guardar Cambios' }}
+              </button>
+            </div>
           </div>
         </form>
       </div>
@@ -227,7 +230,7 @@
 </template>
 
 <script setup>
-  import { ref, computed } from 'vue'
+  import { ref, computed, onMounted } from 'vue'
   import Swal from 'sweetalert2'
   import PageHeader from '@/shared/components/common/PageHeader.vue'
   import TimelineItem from '@/shared/components/common/TimelineItem.vue'
@@ -237,14 +240,20 @@
   import ComentariosSection from '@/private_app/ventanilla/shared/components/ComentariosSection.vue'
   import AsignacionesSection from '@/private_app/ventanilla/shared/components/AsignacionesSection.vue'
   import RespuestaSection from '@/private_app/ventanilla/shared/components/RespuestaSection.vue'
+  import Sticker from '@/shared/components/solicitud/Sticker.vue'
   import { useSolicitudEditForm } from '@/shared/composables/useSolicitudEditForm'
   import { useAppSettings } from '@/shared/composables/useAppSettings'
+  import { PrinterIcon } from '@heroicons/vue/20/solid'
 
   const props = defineProps({
     id: { type: String, required: true }
   })
 
-  const { settings } = useAppSettings()
+  const { settings, fetchSettings } = useAppSettings()
+
+  onMounted(() => {
+    fetchSettings()
+  })
 
   const tabs = [
     { id: 'solicitante', label: 'Solicitante' },
@@ -276,6 +285,50 @@
     solicitudData,
     handleUpdate,
   } = useSolicitudEditForm(props.id)
+
+  const stickerData = computed(() => {
+    const s = solicitudData.value
+    const cfg = settings.value
+    if (!s || !cfg) return null
+
+    const titular = s.responsables?.find((r) => r.tiporesponsable_id === 1) ?? s.responsables?.[0]
+    const encargadoProvisional = cfg.encargado === 1 ? '(E)' : cfg.provisional === 1 ? '(P)' : ''
+
+    let fecha = ''
+    let hora = ''
+    if (s.created_at) {
+      const d = new Date(s.created_at)
+      fecha = d.toLocaleDateString('es-CO', { day: '2-digit', month: '2-digit', year: 'numeric' })
+      hora = d.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit', hour12: true })
+    } else {
+      fecha = s.fecha ?? ''
+      hora = s.hora ?? ''
+    }
+
+    const usuarioReceptor =
+      typeof s.usuario_receptor === 'string' ? s.usuario_receptor : (s.usuario_receptor?.nombre ?? '')
+
+    return {
+      numerosolicitud: s.numerosolicitud,
+      vigencia: s.vigencia,
+      fecha,
+      hora,
+      solicitante_nombre: titular?.nombre ?? '',
+      solicitante_identificacion: titular?.documento ?? '',
+      solicitante_email: s.email ?? '',
+      folios: s.folios ?? '',
+      anexos: s.anexos ?? '',
+      origen: s.origen ?? '',
+      usuario_receptor: usuarioReceptor,
+      qr_image: s.qr_image ?? '',
+      configuracion: {
+        representante: cfg.representante || '',
+        nombreCuraduria: `${cfg.nombre ?? ''} ${encargadoProvisional}`.trim(),
+        prefijoVentanilla: cfg.prefijo_ventanilla || '',
+        logoUrl: `/src/assets/${cfg.logo}`,
+      },
+    }
+  })
 
   const isSaving = computed(() => {
     if (activeTab.value === 'respuesta') {
