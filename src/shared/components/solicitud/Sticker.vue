@@ -72,8 +72,9 @@
     </div>
 
     <!-- Botón de impresión -->
-    <button 
-      @click="handlePrint" 
+    <button
+      type="button"
+      @click="handlePrint"
       class="inline-flex items-center justify-center gap-2 rounded-lg bg-[#FFA800] px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-[#e69700] transition-colors duration-200"
     >
       <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

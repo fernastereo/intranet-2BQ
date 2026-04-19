@@ -58,7 +58,7 @@ export function useSolicitudForm(origen) {
       representante: settings.value?.representante || '',
       nombreCuraduria: `${settings.value?.nombre} ${encargadoProvisional}` || '',
       prefijoVentanilla: settings.value?.prefijo_ventanilla || '',
-      logoUrl: `/src/assets/${settings.value?.logo}`
+      logoUrl: `${import.meta.env.BASE_URL}${settings.value?.logo}`
     }
   })
 
