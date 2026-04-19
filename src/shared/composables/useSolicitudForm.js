@@ -76,7 +76,7 @@ export function useSolicitudForm(origen) {
     fd.append('subcategoria_id', formData.subcategoria)
     fd.append('expediente', formData.expediente)
     fd.append('folios', formData.folios)
-    fd.append('anexos', formData.anexos)
+    fd.append('anexos', formData.anexos || '0')
     fd.append('descripcion', formData.descripcion)
     if (origen === 'oficina') {
       fd.append('usuario_receptor_id', user.value)
@@ -107,6 +107,7 @@ export function useSolicitudForm(origen) {
     if (requiereExpediente.value && !form.value.expediente?.trim()) {
       errors.value.expediente = 'El número de expediente es requerido para esta subcategoría'
     }
+    if (!form.value.folios?.toString().trim()) errors.value.folios = 'El número de folios es requerido'
     if (!form.value.descripcion.trim()) errors.value.descripcion = 'La descripcion es requerida'
     else if (form.value.descripcion.length > 2000) errors.value.descripcion = 'La descripcion no puede exceder 2000 caracteres'
 

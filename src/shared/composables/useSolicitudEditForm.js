@@ -87,7 +87,7 @@ export function useSolicitudEditForm(id) {
       subcategoria_id: form.value.subcategoria,
       expediente: form.value.expediente,
       folios: form.value.folios,
-      anexos: form.value.anexos,
+      anexos: form.value.anexos || '0',
       descripcion: form.value.descripcion,
     }
     if (solicitudData.value?.origen === 'oficina' && user.value?.id) {
@@ -119,6 +119,7 @@ export function useSolicitudEditForm(id) {
     if (requiereExpediente.value && !form.value.expediente?.trim()) {
       errors.value.expediente = 'El número de expediente es requerido para esta subcategoría'
     }
+    if (!form.value.folios?.toString().trim()) errors.value.folios = 'El número de folios es requerido'
     if (!form.value.descripcion?.trim()) errors.value.descripcion = 'La descripcion es requerida'
     else if (form.value.descripcion.length > 2000) errors.value.descripcion = 'La descripcion no puede exceder 2000 caracteres'
 
