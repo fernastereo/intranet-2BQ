@@ -325,7 +325,7 @@
         representante: cfg.representante || '',
         nombreCuraduria: `${cfg.nombre ?? ''} ${encargadoProvisional}`.trim(),
         prefijoVentanilla: cfg.prefijo_ventanilla || '',
-        logoUrl: `/src/assets/${cfg.logo}`,
+        logoUrl: `${import.meta.env.BASE_URL}${cfg.logo}`,
       },
     }
   })

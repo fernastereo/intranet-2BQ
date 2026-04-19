@@ -31,9 +31,11 @@
         <p class="text-sm font-medium text-text">
           Arrastre archivos aqui o <span class="text-primary underline">haga clic para seleccionar</span>
         </p>
-        <p class="text-xs text-text-muted mt-1">PDF, JPG, PNG hasta 10 MB por archivo</p>
+        <p class="text-xs text-text-muted mt-1">PDF, JPG, PNG hasta 6 MB por archivo</p>
       </div>
     </div>
+
+    <p v-if="sizeError" class="mt-2 text-xs text-red-600">{{ sizeError }}</p>
 
     <div v-if="files.length > 0" class="mt-3 flex flex-col gap-2">
       <div
@@ -87,9 +89,12 @@
     'update:modelValue': [files: File[]]
   }>()
 
+  const MAX_FILE_SIZE = 6 * 1024 * 1024 // 6 MB
+
   const fileInput = ref<HTMLInputElement | null>(null)
   const isDragging = ref(false)
   const files = ref<File[]>([...(props.modelValue || [])])
+  const sizeError = ref<string>('')
 
   watch(() => props.modelValue, (newVal) => {
     files.value = [...(newVal || [])]
@@ -115,8 +120,19 @@
   }
 
   function addFiles(newFiles: File[]) {
-    files.value = [...files.value, ...newFiles]
-    emit('update:modelValue', files.value)
+    sizeError.value = ''
+    const oversized = newFiles.filter(f => f.size > MAX_FILE_SIZE)
+    const valid = newFiles.filter(f => f.size <= MAX_FILE_SIZE)
+
+    if (oversized.length > 0) {
+      const names = oversized.map(f => f.name).join(', ')
+      sizeError.value = `El siguiente archivo supera el límite de 10 MB y no fue agregado: ${names}`
+    }
+
+    if (valid.length > 0) {
+      files.value = [...files.value, ...valid]
+      emit('update:modelValue', files.value)
+    }
   }
 
   function removeFile(index: number) {
