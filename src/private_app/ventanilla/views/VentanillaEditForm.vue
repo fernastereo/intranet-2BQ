@@ -108,9 +108,9 @@
               <ComentariosSection :solicitudId="id" v-model="form.comentarios" />
             </div>
 
-            <!-- Tab Respuesta (placeholder) -->
-            <div v-show="activeTab === 'respuesta'" class="animate-fadeIn py-12 text-center text-gray-400 text-sm">
-              En construcción
+            <!-- Tab: Respuesta -->
+            <div v-show="activeTab === 'respuesta'" class="animate-fadeIn">
+              <RespuestaSection ref="respuestaSectionRef" :solicitudId="id" v-model:respuesta="solicitudData.respuesta" />
             </div>
 
           </div>
@@ -125,9 +125,9 @@
             <button
               type="submit"
               class="inline-flex items-center justify-center gap-2 rounded-lg bg-[#FFA800] px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-[#E69500] transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-              :disabled="loading"
+              :disabled="isSaving"
             >
-              <svg v-if="loading" class="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <svg v-if="isSaving" class="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <circle cx="12" cy="12" r="10" stroke-opacity="0.25" />
                 <path d="M12 2a10 10 0 0 1 10 10" stroke-opacity="1" />
               </svg>
@@ -136,7 +136,7 @@
                 <polyline points="17 21 17 13 7 13 7 21" />
                 <polyline points="7 3 7 8 15 8" />
               </svg>
-              {{ loading ? 'Guardando...' : 'Guardar Cambios' }}
+              {{ isSaving ? 'Guardando...' : 'Guardar Cambios' }}
             </button>
           </div>
         </form>
@@ -227,8 +227,7 @@
 </template>
 
 <script setup>
-  import { ref } from 'vue'
-  import { useRouter } from 'vue-router'
+  import { ref, computed } from 'vue'
   import Swal from 'sweetalert2'
   import PageHeader from '@/shared/components/common/PageHeader.vue'
   import TimelineItem from '@/shared/components/common/TimelineItem.vue'
@@ -237,6 +236,7 @@
   import DatosAdjuntos from '@/shared/components/solicitud/DatosAdjuntos.vue'
   import ComentariosSection from '@/private_app/ventanilla/shared/components/ComentariosSection.vue'
   import AsignacionesSection from '@/private_app/ventanilla/shared/components/AsignacionesSection.vue'
+  import RespuestaSection from '@/private_app/ventanilla/shared/components/RespuestaSection.vue'
   import { useSolicitudEditForm } from '@/shared/composables/useSolicitudEditForm'
   import { useAppSettings } from '@/shared/composables/useAppSettings'
 
@@ -255,13 +255,14 @@
   ]
 
   const activeTab = ref('solicitante')
+  const respuestaSectionRef = ref(null)
 
   const tabFields = {
     solicitante: ['nombre', 'identificacion', 'email', 'telefono', 'direccion', 'tipoResponsable', 'identificacionRepresentante', 'nombreRepresentante'],
     solicitud:   ['categoria', 'subcategoria', 'expediente', 'descripcion'],
     adjuntos:    [],
-    Comentarios: [],
-    Respuesta:   [],
+    comentarios: [],
+    respuesta:   [],
   }
 
   const {
@@ -275,6 +276,13 @@
     solicitudData,
     handleUpdate,
   } = useSolicitudEditForm(props.id)
+
+  const isSaving = computed(() => {
+    if (activeTab.value === 'respuesta') {
+      return respuestaSectionRef.value?.loading ?? false
+    }
+    return loading.value
+  })
 
   const tabHasErrors = (tabId) =>
     tabFields[tabId]?.some(field => !!errors.value[field]) ?? false
@@ -301,6 +309,11 @@
   }
 
   async function onSubmit() {
+    if (activeTab.value === 'respuesta') {
+      await respuestaSectionRef.value?.save()
+      return
+    }
+
     const success = await handleUpdate()
 
     if (success) {

@@ -285,6 +285,97 @@ export const useSolicitudes = () => {
     }
   }
 
+  const respuestaLoading = ref(false)
+
+  const crearRespuesta = async (solicitudId, payload) => {
+    apiError.value = null
+    respuestaLoading.value = true
+
+    const fd = new FormData()
+    fd.append('contenido', payload.contenido)
+    payload.archivos?.forEach((f) => fd.append('files[]', f))
+
+    try {
+      const response = await fetch(`${BASE_API_URL}/solicitudes/${solicitudId}/respuesta`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token.value}` },
+        body: fd,
+      })
+      const data = await response.json()
+
+      if (data.status === 'error') {
+        apiError.value = data.message
+        return null
+      }
+
+      return data.data ?? data
+    } catch (error) {
+      apiError.value = error.message
+      return null
+    } finally {
+      respuestaLoading.value = false
+    }
+  }
+
+  const editarRespuesta = async (solicitudId, respuestaId, payload) => {
+    apiError.value = null
+    respuestaLoading.value = true
+
+    const fd = new FormData()
+    fd.append('contenido', payload.contenido)
+    payload.archivos?.forEach((f) => fd.append('files[]', f))
+
+    try {
+      const response = await fetch(`${BASE_API_URL}/solicitudes/${solicitudId}/respuesta/${respuestaId}`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token.value}` },
+        body: fd,
+      })
+      const data = await response.json()
+
+      if (data.status === 'error') {
+        apiError.value = data.message
+        return null
+      }
+
+      return data.data ?? data
+    } catch (error) {
+      apiError.value = error.message
+      return null
+    } finally {
+      respuestaLoading.value = false
+    }
+  }
+
+  const eliminarRespuesta = async (solicitudId, respuestaId) => {
+    apiError.value = null
+    respuestaLoading.value = true
+
+    try {
+      const response = await fetch(`${BASE_API_URL}/solicitudes/${solicitudId}/respuesta/${respuestaId}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token.value}` },
+      })
+      const text = await response.text()
+      let data = {}
+      if (text) {
+        try { data = JSON.parse(text) } catch { /* empty body */ }
+      }
+
+      if (!response.ok || data.status === 'error') {
+        apiError.value = data.message || `Error ${response.status}`
+        return false
+      }
+
+      return true
+    } catch (error) {
+      apiError.value = error.message
+      return false
+    } finally {
+      respuestaLoading.value = false
+    }
+  }
+
   const uploadAdjuntosLoading = ref(false)
 
   const agregarAdjuntos = async (id, files) => {
@@ -457,7 +548,11 @@ export const useSolicitudes = () => {
     apiError,
     asignacionesLoading,
     uploadAdjuntosLoading,
+    respuestaLoading,
     crearSolicitud,
+    crearRespuesta,
+    editarRespuesta,
+    eliminarRespuesta,
     actualizarSolicitud,
     agregarAdjuntos,
     crearComentario,
