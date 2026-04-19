@@ -124,7 +124,6 @@ const props = defineProps({
 })
 
 const handlePrint = async () => {
-  preventDefault()
   const element = document.getElementById('pdf-content')
   if (!element) return
 
