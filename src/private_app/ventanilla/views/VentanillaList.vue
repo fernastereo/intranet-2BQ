@@ -15,7 +15,7 @@
         <button
           type="button"
           @click="router.push({ name: 'nuevo-ventanilla' })"
-          class="inline-flex items-center gap-x-1.5 rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 cursor-pointer"
+          class="inline-flex items-center justify-center gap-2 rounded-lg bg-[#FFA800] px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-[#E69500] transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <PlusIcon class="-ml-0.5 size-5" aria-hidden="true" />
           Nueva Solicitud
