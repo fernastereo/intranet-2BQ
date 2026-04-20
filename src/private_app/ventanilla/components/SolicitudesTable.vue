@@ -75,7 +75,7 @@
         <!-- Indicadores: adjuntos / comentarios/ historial / respuesta -->
         <td class="px-3 py-3 text-sm whitespace-nowrap">
           <div class="flex items-center gap-2">
-            <span :class="solicitud.adjuntos?.length ? 'text-indigo-500' : 'text-gray-300'"
+            <span :class="solicitud.adjuntos?.length ? 'text-[#1A4972]' : 'text-gray-300'"
               :title="solicitud.adjuntos?.length ? `${solicitud.adjuntos.length} adjunto(s)` : 'Sin adjuntos'">
               <PaperClipIcon class="size-4" />
             </span>
@@ -98,7 +98,7 @@
         <td class="relative py-3 pr-4 pl-3 text-right text-sm font-medium whitespace-nowrap sm:pr-0">
           <RouterLink
             :to="{ name: 'editar-ventanilla', params: { id: solicitud.id } }"
-            class="text-indigo-600 hover:text-indigo-900"
+            class="text-[#1A4972] hover:text-[#14485c]"
           >
             <PencilSquareIcon class="size-5" />
             <span class="sr-only">Editar {{ solicitud.numerosolicitud }}</span>
