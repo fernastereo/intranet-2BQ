@@ -174,7 +174,7 @@
             </div>
             <div>
               <p class="text-xs text-gray-500 mb-1">Fecha de Creación</p>
-              <p class="text-sm text-gray-900">{{ formatDateTime(solicitudData.created_at) }}</p>
+              <p class="text-sm text-gray-900">{{ formatDateTime(solicitudData.fecha + ' ' + solicitudData.hora) }}</p>
             </div>
             <div>
               <p class="text-xs text-gray-500 mb-1">
