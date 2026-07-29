@@ -110,9 +110,21 @@ const router = createRouter({
         },
         {
           path: 'reportes',
-          name: 'reportes',
           component: () => import('@/private_app/reportes/wrapper/ReportesView.vue'),
-          meta: { breadcrumb: 'Reportes' },
+          meta: { breadcrumb: 'Reportes', breadcrumbTo: { name: 'reportes' } },
+          children: [
+            {
+              path: '',
+              name: 'reportes',
+              component: () => import('@/private_app/reportes/views/ReportesList.vue'),
+            },
+            {
+              path: 'solicitudes-recibidas',
+              name: 'reporte-solicitudes-recibidas',
+              component: () => import('@/private_app/reportes/views/ReporteSolicitudesRecibidasView.vue'),
+              meta: { breadcrumb: 'Solicitudes Recibidas' },
+            },
+          ],
         },
       ],
     },
